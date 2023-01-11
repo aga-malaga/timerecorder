@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
+public
 class Mapper {
     public static User mapFormToUser(UserForm userForm) {
         return new User(

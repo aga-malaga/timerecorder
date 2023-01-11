@@ -1,6 +1,8 @@
 package com.example.antologic.user;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,15 +12,17 @@ import java.util.UUID;
 
 @Repository
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
     List<User> findAll();
 
-    User save(User user);
-    void deleteByUuid(UUID uuid);
-    Optional<User> findByUuid(UUID uuid);
+    List<User> findAll(Specification<User> specification);
 
-    User findByLogin(String login);
+    User save(User user);
+
+    void deleteByUuid(UUID uuid);
+
+    Optional<User> findByUuid(UUID uuid);
 
     boolean existsByUuid(UUID uuid);
 

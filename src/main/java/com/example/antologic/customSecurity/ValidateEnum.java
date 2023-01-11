@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 @Component
-class ValidateEnum implements Validator{
+class ValidateEnum implements EnumValidator {
 
     private final List<String> list = List.of(
             Role.EMPLOYEE.name(),
@@ -20,4 +20,6 @@ class ValidateEnum implements Validator{
             throw new RuntimeException(role + " this role does not exist");
         }
     }
+
+
 }
