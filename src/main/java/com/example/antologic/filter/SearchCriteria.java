@@ -1,16 +1,14 @@
 package com.example.antologic.filter;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.antologic.user.Role;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class SearchCriteria {
-    private String key;
-    private Object value;
-    private SearchOperation operation;
+import java.math.BigDecimal;
+
+public record SearchCriteria(
+        String login,
+        String name,
+        String surname,
+        BigDecimal costFrom,
+        BigDecimal costTo,
+        Role role) {
 }

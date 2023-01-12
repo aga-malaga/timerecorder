@@ -19,30 +19,30 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "users_table")
+@Table(name = "users")
 public class User {
 
-    @Column(name = "users_uuid")
+    @Column(name = "uuid")
     private final UUID uuid = UUID.randomUUID();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "users_id")
+    @Column(name = "id")
     private Long id;
-    @Column(name = "users_login")
+    @Column(name = "login")
     private String login;
-    @Column(name = "users_name")
+    @Column(name = "name")
     private String name;
-    @Column(name = "users_surname")
+    @Column(name = "surname")
     private String surname;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "users_role")
+    @Column(name = "role")
     private Role role;
-    @Column(name = "users_email")
+    @Column(name = "email")
     private String email;
-    @Column(name = "users_password")
+    @Column(name = "password")
     private String password;
-    @Column(name = "users_cost_per_hour")
+    @Column(name = "cost_per_hour")
     private BigDecimal costPerHour;
 
     public User(final String login, final String name, final String surname, final Role role, final String email, final String password, final BigDecimal costPerHour) {

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 @Component
-class ValidateEnum implements EnumValidator {
+class EnumValidatorImpl implements EnumValidator {
 
     private final List<String> list = List.of(
             Role.EMPLOYEE.name(),

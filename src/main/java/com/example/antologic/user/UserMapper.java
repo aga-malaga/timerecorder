@@ -2,7 +2,6 @@ package com.example.antologic.user;
 
 
 import com.example.antologic.user.dto.UserDTO;
-import com.example.antologic.user.dto.UserDTOExtended;
 import com.example.antologic.user.dto.UserForm;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public
-class Mapper {
-    public static User mapFormToUser(UserForm userForm) {
+class UserMapper {
+    public static User toUser(UserForm userForm) {
         return new User(
                 userForm.getLogin(),
                 userForm.getName(),
@@ -23,15 +22,8 @@ class Mapper {
         );
     }
 
-    public static UserDTO mapUserToDto(User user) {
+    public static UserDTO toDto(User user) {
         return new UserDTO(
-                user.getUuid(),
-                user.getLogin()
-        );
-    }
-
-    public static UserDTOExtended mapUserToDtoExtended(User user) {
-        return new UserDTOExtended(
                 user.getUuid(),
                 user.getLogin(),
                 user.getName(),

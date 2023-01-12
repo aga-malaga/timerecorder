@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface AdminValidator {
 
-    boolean validateAdmin(UUID uuid);
+    boolean validate(UUID uuid);
 }

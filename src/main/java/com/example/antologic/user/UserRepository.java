@@ -4,7 +4,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     User save(User user);
 
-    void deleteByUuid(UUID uuid);
+    User findUserByRole(Role role);
 
     Optional<User> findByUuid(UUID uuid);
 
@@ -28,6 +27,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     boolean existsByLogin(String login);
 
-    @Transactional
-    Long removeUserByUuid(UUID uuid);
+    void removeUserByUuid(UUID uuid);
 }
