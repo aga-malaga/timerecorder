@@ -1,8 +1,11 @@
 package com.example.antologic.service;
 
 import com.example.antologic.filter.SearchCriteria;
+import com.example.antologic.user.User;
 import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserForm;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,12 +14,15 @@ public interface UserService {
 
     List<UserDTO> findUsers(UUID adminUuid);
 
+    Page<User> findUsersPaged(UUID adminUuid, Pageable p);
+
     UserDTO createUser(UUID adminUuid, UserForm userForm);
 
     void editUser(UUID adminUuid, UUID uuid, UserForm userForm);
 
     void deleteUser(UUID adminUuid, UUID uuid);
 
-    List<UserDTO> filter(UUID adminUuid, SearchCriteria searchCriteria);
+    List<UserDTO> filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page);
+
 
 }

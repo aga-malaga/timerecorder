@@ -4,6 +4,7 @@ import com.example.antologic.user.Role;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 @Component
 class EnumValidatorImpl implements EnumValidator {
 
@@ -13,8 +14,8 @@ class EnumValidatorImpl implements EnumValidator {
             Role.MANAGER.name()
     );
 
-    public boolean validateEnum(String role){
-        if (list.contains(role)){
+    public boolean validateEnum(String role) {
+        if (list.contains(role)) {
             return true;
         } else {
             throw new RuntimeException(role + " this role does not exist");

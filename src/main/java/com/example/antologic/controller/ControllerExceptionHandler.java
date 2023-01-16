@@ -1,9 +1,10 @@
 package com.example.antologic.controller;
 
+import com.example.antologic.common.AlreadyExistsException;
 import com.example.antologic.common.ErrorMessage;
-import com.example.antologic.common.UnauthorizedException;
-import com.example.antologic.common.RecordAlreadyExistsException;
+import com.example.antologic.common.NoContentException;
 import com.example.antologic.common.NotFoundException;
+import com.example.antologic.common.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -37,11 +38,22 @@ class ControllerExceptionHandler {
         return message;
     }
 
-    @ExceptionHandler(RecordAlreadyExistsException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    public ErrorMessage alreadyExistsException(RecordAlreadyExistsException ex, WebRequest request) {
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public ErrorMessage alreadyExistsException(AlreadyExistsException ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.FORBIDDEN.value(),
+                LocalDateTime.now(),
+                ex.getMessage(),
+                request.getDescription(false));
+        return message;
+    }
+
+    @ExceptionHandler(NoContentException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorMessage alreadyExistsException(NoContentException ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));

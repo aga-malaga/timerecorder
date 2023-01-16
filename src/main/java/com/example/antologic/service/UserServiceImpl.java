@@ -1,21 +1,22 @@
 package com.example.antologic.service;
 
 import com.example.antologic.common.NotFoundException;
-import com.example.antologic.common.RecordAlreadyExistsException;
+import com.example.antologic.common.AlreadyExistsException;
 import com.example.antologic.customSecurity.AdminValidator;
 import com.example.antologic.filter.SearchCriteria;
 import com.example.antologic.user.User;
-import com.example.antologic.user.UserMapper;
-import com.example.antologic.user.UserRepository;
+import com.example.antologic.user.dto.UserMapper;
+import com.example.antologic.repository.UserRepository;
+import com.example.antologic.user.UserSpecification;
 import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserForm;
-import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,12 +41,17 @@ public class UserServiceImpl implements UserService {
         validateAdmin.validate(admin);
     }
 
+    public Page<User> findUsersPaged(UUID adminUuid, Pageable p) {
+        validate(adminUuid);
+        return userRepository.findAll(p);
+    }
+
     @Override
     public UserDTO createUser(UUID adminUuid, UserForm userForm) {
         validate(adminUuid);
 
         if (userRepository.existsByLogin(userForm.getLogin())) {
-            throw new RecordAlreadyExistsException("This login already exists");
+            throw new AlreadyExistsException("This login already exists");
         }
         User user = UserMapper.toUser(userForm);
         userRepository.save(user);
@@ -81,29 +87,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> filter(UUID adminUuid, SearchCriteria searchCriteria) {
-        final Specification<User> specification = (root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
+    public List<UserDTO> filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page) {
+        Specification<User> specification = new UserSpecification(searchCriteria);
 
-            if (searchCriteria.name() != null) {
-                predicates.add(builder.equal(root.get("name"), searchCriteria.name()));
-            }
-            if (searchCriteria.surname() != null) {
-                predicates.add(builder.equal(root.get("surname"), searchCriteria.surname()));
-            }
-            if (searchCriteria.costFrom() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("costPerHour"), searchCriteria.costFrom()));
-            }
-            if (searchCriteria.costTo() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("costPerHour"), searchCriteria.costTo()));
-            }
-            if (searchCriteria.role() != null) {
-                predicates.add(builder.equal(root.get("role"), searchCriteria.role()));
-            }
-            return builder.and(predicates.toArray(new Predicate[0]));
-        };
-
-        return userRepository.findAll(specification).stream()
+        return userRepository.findAll(specification, page).getContent().stream()
                 .map(UserMapper::toDto)
                 .collect(Collectors.toList());
     }

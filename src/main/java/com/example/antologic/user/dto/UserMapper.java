@@ -1,12 +1,9 @@
-package com.example.antologic.user;
+package com.example.antologic.user.dto;
 
 
-import com.example.antologic.user.dto.UserDTO;
-import com.example.antologic.user.dto.UserForm;
+import com.example.antologic.user.User;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
 @AllArgsConstructor
 public
 class UserMapper {
@@ -30,7 +27,6 @@ class UserMapper {
                 user.getSurname(),
                 user.getRole(),
                 user.getEmail(),
-                user.getPassword(),
                 user.getCostPerHour()
         );
     }
