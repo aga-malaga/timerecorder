@@ -1,6 +1,5 @@
 package com.example.antologic.user;
 
-import com.example.antologic.common.NoContentException;
 import com.example.antologic.filter.SearchCriteria;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -49,9 +48,7 @@ public class UserSpecification implements Specification<User> {
         if (searchCriteria.role() != null) {
             predicates.add(builder.equal(root.get("role"), searchCriteria.role()));
         }
-        if (predicates.size() == 0) {
-            throw new NoContentException("No criteria included");
-        }
+
         return builder.and(predicates.toArray(Predicate[]::new));
     }
 }

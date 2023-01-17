@@ -1,15 +1,16 @@
 package com.example.antologic.service;
 
-import com.example.antologic.common.NotFoundException;
 import com.example.antologic.common.AlreadyExistsException;
+import com.example.antologic.common.NoContentException;
+import com.example.antologic.common.NotFoundException;
 import com.example.antologic.customSecurity.AdminValidator;
 import com.example.antologic.filter.SearchCriteria;
-import com.example.antologic.user.User;
-import com.example.antologic.user.dto.UserMapper;
 import com.example.antologic.repository.UserRepository;
+import com.example.antologic.user.User;
 import com.example.antologic.user.UserSpecification;
 import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserForm;
+import com.example.antologic.user.dto.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -87,11 +88,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page) {
+    public Page<User> filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page) {
+        if (searchCriteria == null) {
+            throw new NoContentException("No criteria included");
+        }
         Specification<User> specification = new UserSpecification(searchCriteria);
 
-        return userRepository.findAll(specification, page).getContent().stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toList());
+        return userRepository.findAll(specification, page);
     }
 }

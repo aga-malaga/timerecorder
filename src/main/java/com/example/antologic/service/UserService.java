@@ -22,7 +22,7 @@ public interface UserService {
 
     void deleteUser(UUID adminUuid, UUID uuid);
 
-    List<UserDTO> filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page);
+    Page<User> filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page);
 
 
 }
