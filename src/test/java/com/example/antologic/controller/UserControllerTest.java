@@ -11,6 +11,9 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,8 +25,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,13 +45,14 @@ class UserControllerTest {
     @DisplayName("the checked form contains wrong email format")
     @Test
     void checkIfFormValidatesContent() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory())
+        {
+            validator = factory.getValidator();
+            UserForm form = new UserForm("login", "name", "surname", Role.EMPLOYEE, "email", "password", BigDecimal.ONE);
+            Set<ConstraintViolation<UserForm>> violations = validator.validate(form);
 
-        UserForm form = new UserForm("login", "name", "surname", Role.EMPLOYEE, "email", "password", BigDecimal.ONE);
-        Set<ConstraintViolation<UserForm>> violations = validator.validate(form);
-
-        assertNotEquals(0, violations.size());
+            assertNotEquals(0, violations.size());
+        }
     }
 
     @Test
@@ -93,31 +99,45 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
-//    @Test
-//    void checkIfThrowsExceptionWhenIncorrectForm() throws Exception {
-//        //given
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        UserForm form = new UserForm(
-//                "",
-//                "name",
-//                "surname",
-//                Role.EMPLOYEE,
-//                "email",
-//                "password",
-//                BigDecimal.ONE
-//        );
-//        UUID adminUuid = UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0");
-//        final String jsonString = objectMapper.writeValueAsString(form);
-//
-//        //when, then
-//        mockMvc
-//                .perform(post("/api/user")
-//                        .param("adminUuid", String.valueOf(adminUuid))
-//                        .content(jsonString)
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andDo(print())
-//                .andExpect(status().isBadRequest())
-//                .andReturn();
-//    }
+    @ParameterizedTest
+    @MethodSource("testInvalidData")
+    void checkIfThrowsExceptionWhenIncorrectForm(String login,
+                                                 String name,
+                                                 String surname,
+                                                 Role role,
+                                                 String email,
+                                                 String password,
+                                                 BigDecimal cost) throws Exception {
+        //given
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserForm form = new UserForm(
+                login, name, surname, role, email, password, cost);
 
+        UUID adminUuid = UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0");
+        final String jsonString = objectMapper.writeValueAsString(form);
+
+        //when, then
+        mockMvc
+                .perform(MockMvcRequestBuilders
+                        .post("/api/users")
+                        .param("adminUuid", String.valueOf(adminUuid))
+                        .content(jsonString)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    private static Stream<Arguments> testInvalidData() {
+        return Stream.of(
+                arguments("", "testName", "testLastname", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "", "testLastname", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", null,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", Role.ADMIN,"", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", Role.ADMIN,"password", "" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", Role.ADMIN,"password", "email@email.com" , null),
+                arguments("", "testName", "", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("", "testName", "", Role.ADMIN,"password", "" , BigDecimal.ONE)
+        );
+
+    }
 }

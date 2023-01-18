@@ -14,7 +14,7 @@ public interface UserService {
 
     List<UserDTO> findUsers(UUID adminUuid);
 
-    Page<User> findUsersPaged(UUID adminUuid, Pageable p);
+    Page<User> findUsersPaged(UUID adminUuid, int pageNo, int pageSize, String sortBy);
 
     UserDTO createUser(UUID adminUuid, UserForm userForm);
 

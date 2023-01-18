@@ -35,8 +35,12 @@ class UserController {
     }
 
     @GetMapping
-    public Page<User> getUsersPaged(@RequestParam UUID adminUuid, Pageable p) {
-        return userService.findUsersPaged(adminUuid, p);
+    public Page<User> getUsersPaged(@RequestParam UUID adminUuid,
+                                    @RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "10") int size,
+                                    @RequestParam(defaultValue = "uuid") String sort)
+    {
+        return userService.findUsersPaged(adminUuid, page, size, sort);
     }
 
     @GetMapping("/filter")

@@ -13,7 +13,9 @@ import com.example.antologic.user.dto.UserForm;
 import com.example.antologic.user.dto.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +44,11 @@ public class UserServiceImpl implements UserService {
         validateAdmin.validate(admin);
     }
 
-    public Page<User> findUsersPaged(UUID adminUuid, Pageable p) {
+    public Page<User> findUsersPaged(UUID adminUuid, int pageNo, int pageSize, String sortBy) {
         validate(adminUuid);
+
+        Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
         return userRepository.findAll(p);
     }
 

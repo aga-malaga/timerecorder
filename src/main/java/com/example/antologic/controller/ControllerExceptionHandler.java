@@ -67,10 +67,10 @@ class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage globalExceptionHandler(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));

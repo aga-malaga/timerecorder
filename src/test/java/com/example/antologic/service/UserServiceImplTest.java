@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,7 @@ public class UserServiceImplTest {
     @Test
     void checkIfFindsUsersPaged() {
         //when
-        underTest.findUsersPaged(UUID.randomUUID(), PageRequest.of(0, 3));
+        underTest.findUsersPaged(UUID.randomUUID(), 0,3,"name");
         //then
         verify(userRepository).findAll(PageRequest.of(0, 3));
 
