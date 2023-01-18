@@ -1,5 +1,6 @@
 package com.example.antologic.user;
 
+import com.example.antologic.project.Project;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +16,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -47,6 +52,8 @@ public class User {
     @Column(name = "cost_per_hour", nullable = false)
     private BigDecimal costPerHour;
 
+    @ManyToMany(mappedBy = "users")
+    private Set<Project> projects = new HashSet<>();
     public User(final String login, final String name, final String surname, final Role role, final String email, final String password, final BigDecimal costPerHour) {
         this.login = login;
         this.name = name;
@@ -57,5 +64,16 @@ public class User {
         this.costPerHour = costPerHour;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final User user = (User) o;
+        return uuid.equals(user.uuid) && email.equals(user.email);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, email);
+    }
 }

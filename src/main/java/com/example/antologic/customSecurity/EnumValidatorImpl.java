@@ -1,11 +1,11 @@
 package com.example.antologic.customSecurity;
 
 import com.example.antologic.user.Role;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 class EnumValidatorImpl implements EnumValidator {
 
     private final List<String> list = List.of(

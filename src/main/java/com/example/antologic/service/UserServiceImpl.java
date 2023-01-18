@@ -20,9 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -31,25 +29,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AdminValidator validateAdmin;
 
-    @Override
-    public List<UserDTO> findUsers(UUID adminUuid) {
-        validate(adminUuid);
-
-        return userRepository.findAll().stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
     public void validate(UUID admin) {
         validateAdmin.validate(admin);
     }
 
-    public Page<User> findUsersPaged(UUID adminUuid, int pageNo, int pageSize, String sortBy) {
+    public Page<UserDTO> findUsers(UUID adminUuid, int pageNo, int pageSize, String sortBy) {
         validate(adminUuid);
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-
-        return userRepository.findAll(p);
+        return userRepository.findAll(p).map(UserMapper::toDto);
     }
 
     @Override

@@ -7,14 +7,11 @@ import com.example.antologic.user.dto.UserForm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
 
-    List<UserDTO> findUsers(UUID adminUuid);
-
-    Page<User> findUsersPaged(UUID adminUuid, int pageNo, int pageSize, String sortBy);
+    Page<UserDTO> findUsers(UUID adminUuid, int pageNo, int pageSize, String sortBy);
 
     UserDTO createUser(UUID adminUuid, UserForm userForm);
 

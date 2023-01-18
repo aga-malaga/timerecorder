@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -29,24 +28,18 @@ import java.util.UUID;
 class UserController {
     private final UserService userService;
 
-    @GetMapping(params = {"!sort", "!page", "!size"})
-    public List<UserDTO> getUsers(@RequestParam UUID adminUuid) {
-        return userService.findUsers(adminUuid);
-    }
-
     @GetMapping
-    public Page<User> getUsersPaged(@RequestParam UUID adminUuid,
-                                    @RequestParam(defaultValue = "0") int page,
-                                    @RequestParam(defaultValue = "10") int size,
-                                    @RequestParam(defaultValue = "uuid") String sort)
-    {
-        return userService.findUsersPaged(adminUuid, page, size, sort);
+    public Page<UserDTO> getUsersPaged(@RequestParam UUID adminUuid,
+                                       @RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "uuid") String sort) {
+        return userService.findUsers(adminUuid, page, size, sort);
     }
 
     @GetMapping("/filter")
     public Page<User> filterUsers(@RequestParam UUID adminUuid,
-                                     @RequestBody(required = false) SearchCriteria searchCriteria,
-                                     Pageable page) {
+                                  @RequestBody(required = false) SearchCriteria searchCriteria,
+                                  Pageable page) {
         return userService.filterUsers(adminUuid, searchCriteria, page);
     }
 

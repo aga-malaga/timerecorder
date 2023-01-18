@@ -6,8 +6,8 @@ import com.example.antologic.common.NotFoundException;
 import com.example.antologic.customSecurity.AdminValidator;
 import com.example.antologic.filter.SearchCriteria;
 import com.example.antologic.repository.UserRepository;
+import com.example.antologic.user.Role;
 import com.example.antologic.user.User;
-import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserForm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,17 +38,18 @@ public class UserServiceImplTest {
     private UserServiceImpl underTest;
 
     @Test
-    void checkIfGetsAllUsers() {
+    void checkIfFindsAllUsersAndReturnsPageUserDto() {
         //given
-        User user = new User();
-        user.setEmail("email");
-        List<User> users = List.of(user);
-        when(userRepository.findAll()).thenReturn(users);
-        // when
-        List<UserDTO> expected = underTest.findUsers(UUID.randomUUID());
-        // then
-        assertThat(expected.get(0).email()).isEqualTo(users.get(0).getEmail());
-        verify(userRepository).findAll();
+        UserForm form = new UserForm(
+                "login2",
+                "name",
+                "surname",
+                Role.EMPLOYEE,
+                "emai222l@wp.pl",
+                "password",
+                BigDecimal.ONE
+        );
+
     }
 
     @Test
@@ -65,7 +65,7 @@ public class UserServiceImplTest {
     @Test
     void checkIfFindsUsersPaged() {
         //when
-        underTest.findUsersPaged(UUID.randomUUID(), 0,3,"name");
+        underTest.findUsers(UUID.randomUUID(), 0,3,"name");
         //then
         verify(userRepository).findAll(PageRequest.of(0, 3));
 
