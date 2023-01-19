@@ -27,6 +27,14 @@ CREATE TABLE projects
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
+CREATE TABLE project_users
+(
+    project_id BIGINT NOT NULL,
+    user_id    BIGINT NOT NULL,
+    CONSTRAINT fk_prouse_on_project FOREIGN KEY (user_id) REFERENCES projects (id),
+    CONSTRAINT fk_prouse_on_user FOREIGN KEY (project_id) REFERENCES users (id)
+);
+
 alter table users
     ADD FOREIGN KEY (project_id) REFERENCES projects(id);
 

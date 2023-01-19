@@ -56,33 +56,47 @@ public class Project {
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
-    @JoinTable(name = "project_user",
+    @JoinTable(name = "project_users",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> users = new HashSet<>();
 
     public Project(final String name,
-            final String description,
-            final LocalDateTime start,
-            final LocalDateTime stop,
-            final BigDecimal budget) {
+                   final String description,
+                   final LocalDateTime start,
+                   final LocalDateTime stop,
+                   final BigDecimal budget) {
         this.name = name;
         this.description = description;
         this.start = start;
         this.stop = stop;
         this.budget = budget;
-        this.users = users;
     }
 
-    public void addUser(User user){
+    public Project(final String name,
+                   final LocalDateTime start,
+                   final LocalDateTime stop,
+                   final BigDecimal budget) {
+        this.name = name;
+        this.start = start;
+        this.stop = stop;
+        this.budget = budget;
+    }
+
+    public void addUser(User user) {
         users.add(user);
         user.getProjects().add(this);
     }
 
-    public void removeUser(User user){
+    public void removeUser(User user) {
         users.remove(user);
         user.getProjects().remove(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, name);
     }
 
     @Override
@@ -91,11 +105,6 @@ public class Project {
         if (o == null || getClass() != o.getClass()) return false;
         final Project project = (Project) o;
         return uuid.equals(project.uuid) && name.equals(project.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid, name);
     }
 }
 

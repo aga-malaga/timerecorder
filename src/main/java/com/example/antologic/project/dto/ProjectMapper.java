@@ -14,6 +14,7 @@ public class ProjectMapper {
         );
     }
 
+
     public static ProjectDTO toDto(Project project) {
         return new ProjectDTO(
                 project.getUuid(),
