@@ -1,6 +1,10 @@
 package com.example.antologic.user;
 
 import com.example.antologic.project.Project;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,7 +45,6 @@ public class User {
     private String name;
     @Column(name = "surname", nullable = false)
     private String surname;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
@@ -51,7 +54,6 @@ public class User {
     private String password;
     @Column(name = "cost_per_hour", nullable = false)
     private BigDecimal costPerHour;
-
     @ManyToMany(mappedBy = "users")
     private Set<Project> projects = new HashSet<>();
 

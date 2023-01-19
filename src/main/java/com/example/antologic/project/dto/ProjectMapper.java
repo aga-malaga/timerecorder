@@ -2,6 +2,8 @@ package com.example.antologic.project.dto;
 
 import com.example.antologic.project.Project;
 
+import java.util.stream.Collectors;
+
 public class ProjectMapper {
 
     public static Project toProject(ProjectForm projectForm) {
@@ -23,7 +25,9 @@ public class ProjectMapper {
                 project.getStart(),
                 project.getStop(),
                 project.getBudget(),
-                project.getUsers()
+                project.getUsers().stream().map(user -> {
+                    return new ProjectUserDTO(user.getUuid(), user.getName(), user.getSurname());
+                }).collect(Collectors.toSet())
         );
     }
 }

@@ -1,6 +1,6 @@
 package com.example.antologic.service;
 
-import com.example.antologic.project.dto.ProjectAddForm;
+import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import org.springframework.data.domain.Page;
@@ -13,5 +13,7 @@ public interface ProjectService {
 
     ProjectDTO createProject(UUID managerUuid, ProjectForm projectForm);
 
-    boolean addUserToProject(UUID managerUuid, ProjectAddForm addForm);
+    boolean addUserToProject(UUID managerUuid, ProjectShiftForm addForm);
+
+    boolean removeUserFromProject(UUID managerUuid, ProjectShiftForm removeForm);
 }

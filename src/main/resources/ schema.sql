@@ -9,9 +9,7 @@ CREATE TABLE users
     role          VARCHAR(50)                             NOT NULL,
     email         VARCHAR(50)                             NOT NULL UNIQUE,
     password      VARCHAR(50)                             NOT NULL,
-    cost_per_hour NUMERIC                                 NOT NULL,
-    project_id    BIGINT,
-    FOREIGN KEY (project_id) REFERENCES projects (id)
+    cost_per_hour NUMERIC                                 NOT NULL
 );
 
 CREATE TABLE projects
@@ -27,6 +25,13 @@ CREATE TABLE projects
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
+alter table users
+    add project_id bigint;
+
+alter table users
+    ADD FOREIGN KEY (project_id) REFERENCES projects(id);
+
+
 CREATE TABLE project_users
 (
     project_id BIGINT NOT NULL,
@@ -34,9 +39,3 @@ CREATE TABLE project_users
     CONSTRAINT fk_prouse_on_project FOREIGN KEY (user_id) REFERENCES projects (id),
     CONSTRAINT fk_prouse_on_user FOREIGN KEY (project_id) REFERENCES users (id)
 );
-
-alter table users
-    ADD FOREIGN KEY (project_id) REFERENCES projects(id);
-
-alter table users
-    add project_id bigint;

@@ -13,5 +13,5 @@ public record ProjectDTO(UUID uuid,
                          LocalDateTime start,
                          LocalDateTime stop,
                          BigDecimal budget,
-                         Set<User> users) {
+                         Set<ProjectUserDTO> userDTO) {
 }

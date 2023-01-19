@@ -2,13 +2,12 @@ package com.example.antologic.service;
 
 import com.example.antologic.common.AlreadyExistsException;
 import com.example.antologic.common.NotFoundException;
-import com.example.antologic.common.dto.PageMapper;
 import com.example.antologic.customSecurity.ManagerValidator;
 import com.example.antologic.project.Project;
-import com.example.antologic.project.dto.ProjectAddForm;
 import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectMapper;
+import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.repository.ProjectRepository;
 import com.example.antologic.repository.UserRepository;
 import com.example.antologic.user.User;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 class ProjectServiceImpl implements ProjectService {
@@ -38,6 +38,10 @@ class ProjectServiceImpl implements ProjectService {
         return projectRepository.findAll(p).map(ProjectMapper::toDto);
     }
 
+    private void validate(final UUID managerUuid) {
+        managerValidator.validateManager(managerUuid);
+    }
+
     public ProjectDTO createProject(UUID managerUuid, ProjectForm projectForm) {
         validate(managerUuid);
 
@@ -51,7 +55,7 @@ class ProjectServiceImpl implements ProjectService {
     }
 
     @Transactional
-    public boolean addUserToProject(UUID managerUuid, ProjectAddForm addForm) {
+    public boolean addUserToProject(UUID managerUuid, ProjectShiftForm addForm) {
         validate(managerUuid);
 
         final Project project = projectRepository.findProjectByUuid(addForm.getProjectUuid()).orElseThrow(() ->
@@ -60,11 +64,27 @@ class ProjectServiceImpl implements ProjectService {
         final User user = userRepository.findByUuid(addForm.getUserUuid()).orElseThrow(() ->
                 new NotFoundException("User does not exist"));
 
+        if (project.getUsers().contains(user)){
+            throw new AlreadyExistsException("This user is already in the project");
+        }
+
         project.addUser(user);
+        projectRepository.save(project);
         return true;
     }
 
-    private void validate(final UUID managerUuid) {
-        managerValidator.validateManager(managerUuid);
+    @Transactional
+    public boolean removeUserFromProject(UUID managerUuid, ProjectShiftForm removeForm) {
+        validate(managerUuid);
+
+        final Project project = projectRepository.findProjectByUuid(removeForm.getProjectUuid()).orElseThrow(() ->
+                new NotFoundException("Project does not exists"));
+
+        final User user = userRepository.findByUuid(removeForm.getUserUuid()).orElseThrow(() ->
+                new NotFoundException("User does not exist"));
+
+        project.removeUser(user);
+        projectRepository.save(project);
+        return true;
     }
 }

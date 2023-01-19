@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectAddForm {
+public class ProjectShiftForm {
     @NotNull
     private UUID projectUuid;
     @NotNull

@@ -4,6 +4,8 @@ package com.example.antologic.user.dto;
 import com.example.antologic.user.User;
 import lombok.AllArgsConstructor;
 
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 public
 class UserMapper {
@@ -29,7 +31,7 @@ class UserMapper {
                 user.getRole(),
                 user.getEmail(),
                 user.getCostPerHour(),
-                user.getProjects()
-        );
+                user.getProjects().stream().map(p -> p.getName()).collect(Collectors.toSet()
+                ));
     }
 }

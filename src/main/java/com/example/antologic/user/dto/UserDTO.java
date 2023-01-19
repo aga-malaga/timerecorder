@@ -15,7 +15,7 @@ public record UserDTO(
         Role role,
         String email,
         BigDecimal costPerHour,
-        Set<Project> projects)
+        Set<String> projects)
 {
 }
 

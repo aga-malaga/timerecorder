@@ -1,15 +1,15 @@
 package com.example.antologic.controller;
 
-import com.example.antologic.project.dto.ProjectAddForm;
 import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
+import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,14 +37,20 @@ class ProjectController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProjectDTO createProject(@RequestParam UUID managerUuid,
-                                 @RequestBody @Valid ProjectForm projectForm) {
+                                    @RequestBody @Valid ProjectForm projectForm) {
         return projectService.createProject(managerUuid, projectForm);
     }
 
-    @PatchMapping
+    @PostMapping("/addUser")
     public void addUserToProject(@RequestParam UUID managerUuid,
-                                 @RequestBody @Valid ProjectAddForm addForm) {
-        projectService.addUserToProject(managerUuid, addForm);
+                                 @RequestBody @Valid ProjectShiftForm shiftForm) {
+        projectService.addUserToProject(managerUuid, shiftForm);
+    }
+
+    @DeleteMapping("/removeUser")
+    public void removeUserFromProject(@RequestParam UUID managerUuid,
+                                      @RequestBody @Valid ProjectShiftForm shiftForm) {
+        projectService.removeUserFromProject(managerUuid, shiftForm);
     }
 
 
