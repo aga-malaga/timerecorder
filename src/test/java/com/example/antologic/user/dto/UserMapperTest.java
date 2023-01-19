@@ -10,7 +10,7 @@ class UserMapperTest {
     @Test
     void checkIfMapsFormToUser() {
         //given
-        UserForm form = new UserForm();
+        UserCreateForm form = new UserCreateForm();
         form.setLogin("userform");
         //when
         final User user = UserMapper.toUser(form);

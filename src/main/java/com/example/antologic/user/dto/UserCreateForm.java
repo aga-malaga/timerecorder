@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public
-class UserForm {
+public class UserCreateForm {
 
     @NotEmpty(message = "login is mandatory")
     private String login;

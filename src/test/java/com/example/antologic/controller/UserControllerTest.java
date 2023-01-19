@@ -3,7 +3,7 @@ package com.example.antologic.controller;
 import com.example.antologic.service.UserService;
 import com.example.antologic.user.Role;
 import com.example.antologic.user.dto.UserDTO;
-import com.example.antologic.user.dto.UserForm;
+import com.example.antologic.user.dto.UserCreateForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -48,8 +48,8 @@ class UserControllerTest {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory())
         {
             validator = factory.getValidator();
-            UserForm form = new UserForm("login", "name", "surname", Role.EMPLOYEE, "email", "password", BigDecimal.ONE);
-            Set<ConstraintViolation<UserForm>> violations = validator.validate(form);
+            UserCreateForm form = new UserCreateForm("login", "name", "surname", Role.EMPLOYEE, "email", "password", BigDecimal.ONE);
+            Set<ConstraintViolation<UserCreateForm>> violations = validator.validate(form);
 
             assertNotEquals(0, violations.size());
         }
@@ -73,7 +73,7 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         UUID adminUuid = UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0");
 
-        UserForm form = new UserForm(
+        UserCreateForm form = new UserCreateForm(
                 "login2",
                 "name",
                 "surname",
@@ -110,7 +110,7 @@ class UserControllerTest {
                                                  BigDecimal cost) throws Exception {
         //given
         ObjectMapper objectMapper = new ObjectMapper();
-        UserForm form = new UserForm(
+        UserCreateForm form = new UserCreateForm(
                 login, name, surname, role, email, password, cost);
 
         UUID adminUuid = UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0");
