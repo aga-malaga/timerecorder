@@ -28,7 +28,8 @@ class UserMapper {
                 user.getSurname(),
                 user.getRole(),
                 user.getEmail(),
-                user.getCostPerHour()
+                user.getCostPerHour(),
+                user.getProjects()
         );
     }
 }

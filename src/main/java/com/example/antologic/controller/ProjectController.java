@@ -36,7 +36,7 @@ class ProjectController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProjectDTO createUser(@RequestParam UUID managerUuid,
+    public ProjectDTO createProject(@RequestParam UUID managerUuid,
                                  @RequestBody @Valid ProjectForm projectForm) {
         return projectService.createProject(managerUuid, projectForm);
     }

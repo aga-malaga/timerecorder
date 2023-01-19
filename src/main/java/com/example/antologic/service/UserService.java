@@ -2,14 +2,11 @@ package com.example.antologic.service;
 
 import com.example.antologic.common.dto.PageDTO;
 import com.example.antologic.filter.SearchCriteria;
-import com.example.antologic.user.User;
-import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserCreateForm;
+import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserUpdateForm;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserService {

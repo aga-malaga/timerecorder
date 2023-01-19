@@ -62,28 +62,6 @@ public class Project {
     )
     private Set<User> users = new HashSet<>();
 
-    public Project(final String name,
-                   final String description,
-                   final LocalDateTime start,
-                   final LocalDateTime stop,
-                   final BigDecimal budget) {
-        this.name = name;
-        this.description = description;
-        this.start = start;
-        this.stop = stop;
-        this.budget = budget;
-    }
-
-    public Project(final String name,
-                   final LocalDateTime start,
-                   final LocalDateTime stop,
-                   final BigDecimal budget) {
-        this.name = name;
-        this.start = start;
-        this.stop = stop;
-        this.budget = budget;
-    }
-
     public void addUser(User user) {
         users.add(user);
         user.getProjects().add(this);

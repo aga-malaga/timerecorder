@@ -5,13 +5,13 @@ import com.example.antologic.project.Project;
 public class ProjectMapper {
 
     public static Project toProject(ProjectForm projectForm) {
-        return new Project(
-                projectForm.getName(),
-                projectForm.getDescription(),
-                projectForm.getStart(),
-                projectForm.getStop(),
-                projectForm.getBudget()
-        );
+        Project project = new Project();
+        project.setName(projectForm.getName());
+        project.setDescription(projectForm.getDescription());
+        project.setStart(projectForm.getStart());
+        project.setStop(projectForm.getStop());
+        project.setBudget(projectForm.getBudget());
+        return project;
     }
 
 

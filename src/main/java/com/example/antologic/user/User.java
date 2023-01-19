@@ -54,15 +54,7 @@ public class User {
 
     @ManyToMany(mappedBy = "users")
     private Set<Project> projects = new HashSet<>();
-    public User(final String login, final String name, final String surname, final Role role, final String email, final String password, final BigDecimal costPerHour) {
-        this.login = login;
-        this.name = name;
-        this.surname = surname;
-        this.role = role;
-        this.email = email;
-        this.password = password;
-        this.costPerHour = costPerHour;
-    }
+
 
     @Override
     public boolean equals(final Object o) {

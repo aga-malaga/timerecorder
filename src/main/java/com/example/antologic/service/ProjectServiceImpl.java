@@ -11,12 +11,14 @@ import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectMapper;
 import com.example.antologic.repository.ProjectRepository;
 import com.example.antologic.repository.UserRepository;
+import com.example.antologic.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 @Service
@@ -26,6 +28,7 @@ class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
 
     private final UserRepository userRepository;
+
     private final ManagerValidator managerValidator;
 
     public Page<ProjectDTO> findProjects(UUID managerUuid, int pageNo, int pageSize, String sortBy) {
@@ -47,16 +50,17 @@ class ProjectServiceImpl implements ProjectService {
         return ProjectMapper.toDto(project);
     }
 
+    @Transactional
     public boolean addUserToProject(UUID managerUuid, ProjectAddForm addForm) {
         validate(managerUuid);
 
         final Project project = projectRepository.findProjectByUuid(addForm.getProjectUuid()).orElseThrow(() ->
                 new NotFoundException("Project does not exists"));
 
-        project.addUser(userRepository.findByUuid(addForm.getUserUuid()).orElseThrow(() ->
-                new NotFoundException("User does not exist")));
+        final User user = userRepository.findByUuid(addForm.getUserUuid()).orElseThrow(() ->
+                new NotFoundException("User does not exist"));
 
-
+        project.addUser(user);
         return true;
     }
 

@@ -19,7 +19,8 @@ public class UserTestFactory {
                 Role.ADMIN,
                 "email@gmail.com",
                 "password",
-                BigDecimal.ONE);
+                BigDecimal.ONE,
+                new HashSet<>());
     }
 
     public static User createUserEmployee(){
@@ -30,7 +31,8 @@ public class UserTestFactory {
                 Role.EMPLOYEE,
                 "email@wp.pl",
                 "password",
-                BigDecimal.ONE);
+                BigDecimal.ONE,
+                new HashSet<>());
     }
 
     public static UserCreateForm createUserForm(){
