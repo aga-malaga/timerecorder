@@ -1,13 +1,13 @@
 package com.example.antologic.controller;
 
+import com.example.antologic.common.dto.PageDTO;
 import com.example.antologic.filter.SearchCriteria;
 import com.example.antologic.service.UserService;
-import com.example.antologic.user.User;
+import com.example.antologic.user.dto.UserCreateForm;
 import com.example.antologic.user.dto.UserDTO;
-import com.example.antologic.user.dto.UserForm;
+import com.example.antologic.user.dto.UserUpdateForm;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,29 +29,29 @@ class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Page<UserDTO> getUsersPaged(@RequestParam UUID adminUuid,
-                                       @RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "10") int size,
-                                       @RequestParam(defaultValue = "uuid") String sort) {
+    public PageDTO getUsersPaged(@RequestParam UUID adminUuid,
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "10") int size,
+                                 @RequestParam(defaultValue = "surname") String sort) {
         return userService.findUsers(adminUuid, page, size, sort);
     }
 
     @GetMapping("/filter")
-    public Page<User> filterUsers(@RequestParam UUID adminUuid,
-                                  @RequestBody(required = false) SearchCriteria searchCriteria,
-                                  Pageable page) {
+    public PageDTO filterUsers(@RequestParam UUID adminUuid,
+                                     @RequestBody(required = false) SearchCriteria searchCriteria,
+                                     Pageable page) {
         return userService.filterUsers(adminUuid, searchCriteria, page);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO createUser(@RequestParam UUID adminUuid, @RequestBody @Valid UserForm userForm) {
-        return userService.createUser(adminUuid, userForm);
+    public UserDTO createUser(@RequestParam UUID adminUuid, @RequestBody @Valid UserCreateForm userCreateForm) {
+        return userService.createUser(adminUuid, userCreateForm);
     }
 
     @PutMapping
-    public void updateUser(@RequestParam UUID adminUuid, @RequestParam UUID uuid, @RequestBody @Valid UserForm userForm) {
-        userService.editUser(adminUuid, uuid, userForm);
+    public void updateUser(@RequestParam UUID adminUuid, @RequestBody @Valid UserUpdateForm userUpdateForm) {
+        userService.editUser(adminUuid, userUpdateForm);
     }
 
     @DeleteMapping

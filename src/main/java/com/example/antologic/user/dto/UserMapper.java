@@ -7,16 +7,17 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public
 class UserMapper {
-    public static User toUser(UserForm userForm) {
-        return new User(
-                userForm.getLogin(),
-                userForm.getName(),
-                userForm.getSurname(),
-                userForm.getRole(),
-                userForm.getEmail(),
-                userForm.getPassword(),
-                userForm.getCostPerHour()
-        );
+    public static User toUser(UserCreateForm userCreateForm) {
+        User user = new User();
+        user.setLogin(userCreateForm.getLogin());
+        user.setName(userCreateForm.getName());
+        user.setSurname(userCreateForm.getSurname());
+        user.setRole(userCreateForm.getRole());
+        user.setEmail(userCreateForm.getEmail());
+        user.setPassword(userCreateForm.getPassword());
+        user.setCostPerHour(userCreateForm.getCostPerHour());
+
+        return user;
     }
 
     public static UserDTO toDto(User user) {
