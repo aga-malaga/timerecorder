@@ -1,24 +1,29 @@
 package com.example.antologic.service;
 
+import com.example.antologic.common.AlreadyExistsException;
+import com.example.antologic.common.NoContentException;
 import com.example.antologic.common.NotFoundException;
-import com.example.antologic.common.RecordAlreadyExistsException;
+import com.example.antologic.common.dto.PageDTO;
+import com.example.antologic.common.dto.PageMapper;
 import com.example.antologic.customSecurity.AdminValidator;
 import com.example.antologic.filter.SearchCriteria;
+import com.example.antologic.repository.UserRepository;
 import com.example.antologic.user.User;
-import com.example.antologic.user.UserMapper;
-import com.example.antologic.user.UserRepository;
+import com.example.antologic.user.UserSpecification;
 import com.example.antologic.user.dto.UserDTO;
-import com.example.antologic.user.dto.UserForm;
-import jakarta.persistence.criteria.Predicate;
+import com.example.antologic.user.dto.UserCreateForm;
+import com.example.antologic.user.dto.UserMapper;
+import com.example.antologic.user.dto.UserUpdateForm;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -27,45 +32,45 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AdminValidator validateAdmin;
 
-    @Override
-    public List<UserDTO> findUsers(UUID adminUuid) {
-        validate(adminUuid);
-
-        return userRepository.findAll().stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
     public void validate(UUID admin) {
         validateAdmin.validate(admin);
     }
 
-    @Override
-    public UserDTO createUser(UUID adminUuid, UserForm userForm) {
+    public PageDTO findUsers(UUID adminUuid, int pageNo, int pageSize, String sortBy) {
         validate(adminUuid);
 
-        if (userRepository.existsByLogin(userForm.getLogin())) {
-            throw new RecordAlreadyExistsException("This login already exists");
+        Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        final Page<UserDTO> pageUserDTO = userRepository.findAll(p).map(UserMapper::toDto);
+        return PageMapper.toDto(pageUserDTO);
+    }
+
+    @Override
+    public UserDTO createUser(UUID adminUuid, UserCreateForm userCreateForm) {
+        validate(adminUuid);
+
+        if (userRepository.existsByLogin(userCreateForm.getLogin())) {
+            throw new AlreadyExistsException("This login already exists");
         }
-        User user = UserMapper.toUser(userForm);
+        User user = UserMapper.toUser(userCreateForm);
         userRepository.save(user);
         return UserMapper.toDto(user);
     }
 
     @Override
-    public void editUser(final UUID adminUuid, final UUID uuid, final UserForm userForm) {
+    public void editUser(final UUID adminUuid, final UserUpdateForm userUpdateForm) {
         validate(adminUuid);
 
-        final User user = userRepository.findByUuid(uuid).orElseThrow(() ->
-                new NotFoundException("User with id " + uuid + " not found"));
+        final UUID userUuid = userUpdateForm.getUserUuid();
+        final User user = userRepository.findByUuid(userUuid).orElseThrow(() ->
+                new NotFoundException("User with id " + userUuid + " not found"));
 
-        user.setLogin(user.getLogin());
-        user.setName(userForm.getName());
-        user.setSurname(userForm.getSurname());
-        user.setRole(userForm.getRole());
-        user.setEmail(userForm.getEmail());
-        user.setPassword(userForm.getPassword());
-        user.setCostPerHour(userForm.getCostPerHour());
+        user.setLogin(userUpdateForm.getLogin());
+        user.setName(userUpdateForm.getName());
+        user.setSurname(userUpdateForm.getSurname());
+        user.setRole(userUpdateForm.getRole());
+        user.setEmail(userUpdateForm.getEmail());
+        user.setPassword(userUpdateForm.getPassword());
+        user.setCostPerHour(userUpdateForm.getCostPerHour());
         userRepository.save(user);
     }
 
@@ -81,30 +86,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> filter(UUID adminUuid, SearchCriteria searchCriteria) {
-        final Specification<User> specification = (root, query, builder) -> {
-            List<Predicate> predicates = new ArrayList<>();
+    public PageDTO filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page) {
+        if (searchCriteria == null) {
+            throw new NoContentException("No criteria included");
+        }
+        Specification<User> specification = new UserSpecification(searchCriteria);
 
-            if (searchCriteria.name() != null) {
-                predicates.add(builder.equal(root.get("name"), searchCriteria.name()));
-            }
-            if (searchCriteria.surname() != null) {
-                predicates.add(builder.equal(root.get("surname"), searchCriteria.surname()));
-            }
-            if (searchCriteria.costFrom() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("costPerHour"), searchCriteria.costFrom()));
-            }
-            if (searchCriteria.costTo() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("costPerHour"), searchCriteria.costTo()));
-            }
-            if (searchCriteria.role() != null) {
-                predicates.add(builder.equal(root.get("role"), searchCriteria.role()));
-            }
-            return builder.and(predicates.toArray(new Predicate[0]));
-        };
-
-        return userRepository.findAll(specification).stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toList());
+        final Page<UserDTO> pageUserDto = userRepository.findAll(specification, page).map(UserMapper::toDto);
+        return PageMapper.toDto(pageUserDto);
     }
 }

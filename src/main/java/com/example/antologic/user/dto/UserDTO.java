@@ -12,7 +12,6 @@ public record UserDTO(
         String surname,
         Role role,
         String email,
-        String password,
         BigDecimal costPerHour)
 {
 }
