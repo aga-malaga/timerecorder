@@ -1,13 +1,12 @@
 package com.example.antologic.filter;
 
-import com.example.antologic.user.User;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public record ProjectSearchCriteria(String name,
                                     LocalDateTime start,
                                     LocalDateTime stop,
-                                    List<User> list,
+                                    List<UUID> userUuid,
                                     Boolean budget) {
 }

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-
 public class UserSpecification implements Specification<User> {
 
     private final SearchCriteria searchCriteria;

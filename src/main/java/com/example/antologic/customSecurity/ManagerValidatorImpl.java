@@ -7,13 +7,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 class ManagerValidatorImpl implements ManagerValidator {
 
     private final UserRepository userRepository;
 
-    public boolean validateManager(UUID uuid){
+    public boolean validateManager(UUID uuid) {
         userRepository.findUserByUuidAndRole(uuid, Role.MANAGER)
                 .orElseThrow(() -> new UnauthorizedException(
                         "User lacks valid authentication credentials for the requested resource"));

@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-
 public class ErrorMessage {
     private LocalDateTime dateTime;
     private String message;

@@ -1,10 +1,6 @@
 package com.example.antologic.user;
 
 import com.example.antologic.project.Project;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -48,7 +44,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
-    @Column(name = "email",nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
@@ -57,6 +53,10 @@ public class User {
     @ManyToMany(mappedBy = "users")
     private Set<Project> projects = new HashSet<>();
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, email);
+    }
 
     @Override
     public boolean equals(final Object o) {
@@ -64,10 +64,5 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         final User user = (User) o;
         return uuid.equals(user.uuid) && email.equals(user.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid, email);
     }
 }

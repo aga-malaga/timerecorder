@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         final Page<UserDTO> pageUserDTO = userRepository.findAll(p).map(UserMapper::toDto);
-        return PageMapper.toDto(pageUserDTO);
+        return PageMapper.toDtoU(pageUserDTO);
     }
 
     @Override
@@ -93,6 +93,6 @@ public class UserServiceImpl implements UserService {
         Specification<User> specification = new UserSpecification(searchCriteria);
 
         final Page<UserDTO> pageUserDto = userRepository.findAll(specification, page).map(UserMapper::toDto);
-        return PageMapper.toDto(pageUserDto);
+        return PageMapper.toDtoU(pageUserDto);
     }
 }

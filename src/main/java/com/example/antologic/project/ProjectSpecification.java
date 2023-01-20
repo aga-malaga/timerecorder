@@ -8,11 +8,12 @@ import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-class ProjectSpecification implements Specification<Project> {
+public class ProjectSpecification implements Specification<Project> {
 
     private final ProjectSearchCriteria projectSearchCriteria;
 
@@ -31,13 +32,23 @@ class ProjectSpecification implements Specification<Project> {
                                     "%" + projectSearchCriteria.name() + "%"))));
         }
         if (projectSearchCriteria.start() != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.get("start"), projectSearchCriteria.stop()));
+            predicates.add(builder.greaterThanOrEqualTo(root.<LocalDateTime>get("start"), projectSearchCriteria.start()));
         }
         if (projectSearchCriteria.stop() != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.get("stop"), projectSearchCriteria.stop()));
+            predicates.add(builder.lessThanOrEqualTo(root.<LocalDateTime>get("stop"), projectSearchCriteria.stop()));
         }
-
-
+        if (projectSearchCriteria.userUuid() != null && projectSearchCriteria.userUuid().size() > 0) {
+            projectSearchCriteria.userUuid().forEach(uuid -> {
+                predicates.add(
+                        builder.isTrue(
+                                root.join("users").get("uuid")
+                                        .in(uuid)
+                        )
+                );
+            });
+        }
         return builder.and(predicates.toArray(Predicate[]::new));
     }
+
+
 }

@@ -10,13 +10,15 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-public class ProjectForm {
-
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProjectUpdateForm {
+    @NotNull
+    private UUID projectUuid;
     @NotEmpty(message = "name is mandatory")
     private String name;
     private String description = "";
@@ -26,5 +28,4 @@ public class ProjectForm {
     private LocalDateTime stop;
     @DecimalMin(value = "0", message = "budget must be greater than 0")
     private BigDecimal budget;
-
 }

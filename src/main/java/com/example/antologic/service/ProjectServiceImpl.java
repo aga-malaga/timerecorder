@@ -1,13 +1,19 @@
 package com.example.antologic.service;
 
 import com.example.antologic.common.AlreadyExistsException;
+import com.example.antologic.common.NoContentException;
 import com.example.antologic.common.NotFoundException;
+import com.example.antologic.common.dto.PageDTO;
+import com.example.antologic.common.dto.PageMapper;
 import com.example.antologic.customSecurity.ManagerValidator;
+import com.example.antologic.filter.ProjectSearchCriteria;
 import com.example.antologic.project.Project;
+import com.example.antologic.project.ProjectSpecification;
 import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectMapper;
 import com.example.antologic.project.dto.ProjectShiftForm;
+import com.example.antologic.project.dto.ProjectUpdateForm;
 import com.example.antologic.repository.ProjectRepository;
 import com.example.antologic.repository.UserRepository;
 import com.example.antologic.user.User;
@@ -16,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +38,12 @@ class ProjectServiceImpl implements ProjectService {
 
     private final ManagerValidator managerValidator;
 
-    public Page<ProjectDTO> findProjects(UUID managerUuid, int pageNo, int pageSize, String sortBy) {
+    public PageDTO findProjects(UUID managerUuid, int pageNo, int pageSize, String sortBy) {
         validate(managerUuid);
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        return projectRepository.findAll(p).map(ProjectMapper::toDto);
+        final Page<ProjectDTO> projectDTOPage = projectRepository.findAll(p).map(ProjectMapper::toDto);
+        return PageMapper.toDtoP(projectDTOPage);
     }
 
     private void validate(final UUID managerUuid) {
@@ -64,7 +72,7 @@ class ProjectServiceImpl implements ProjectService {
         final User user = userRepository.findByUuid(addForm.getUserUuid()).orElseThrow(() ->
                 new NotFoundException("User does not exist"));
 
-        if (project.getUsers().contains(user)){
+        if (project.getUsers().contains(user)) {
             throw new AlreadyExistsException("This user is already in the project");
         }
 
@@ -86,5 +94,45 @@ class ProjectServiceImpl implements ProjectService {
         project.removeUser(user);
         projectRepository.save(project);
         return true;
+    }
+
+    @Override
+    public PageDTO filterProjects(UUID managerUuid, ProjectSearchCriteria searchCriteria, Pageable page) {
+        validate(managerUuid);
+
+        if (searchCriteria == null) {
+            throw new NoContentException("No criteria included");
+        }
+        Specification<Project> specification = new ProjectSpecification(searchCriteria);
+
+        final Page<ProjectDTO> pageUserDto = projectRepository.findAll(specification, page).map(ProjectMapper::toDto);
+        return PageMapper.toDtoP(pageUserDto);
+    }
+
+    @Override
+    public void editProject(final UUID managerUuid, final ProjectUpdateForm updateForm) {
+        validate(managerUuid);
+
+        final UUID uuid = updateForm.getProjectUuid();
+        final Project project = projectRepository.findProjectByUuid(uuid).orElseThrow(() ->
+                new NotFoundException("Project with id " + uuid + " not found"));
+
+        project.setName(updateForm.getName());
+        project.setDescription(updateForm.getDescription());
+        project.setStart(updateForm.getStart());
+        project.setStop(updateForm.getStop());
+        project.setBudget(updateForm.getBudget());
+        projectRepository.save(project);
+    }
+
+    @Override
+    @Transactional
+    public void deleteProject(UUID managerUuid, UUID uuid) {
+        validate(managerUuid);
+
+        if (!projectRepository.existsByUuid(uuid)) {
+            throw new NotFoundException("Project with id " + uuid + " not found");
+        }
+        projectRepository.removeProjectByUuid(uuid);
     }
 }

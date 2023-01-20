@@ -1,5 +1,6 @@
 package com.example.antologic.controller;
 
+import com.example.antologic.UserTestFactory;
 import com.example.antologic.service.UserService;
 import com.example.antologic.user.Role;
 import com.example.antologic.user.dto.UserCreateForm;
@@ -23,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -75,17 +75,9 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         UUID adminUuid = UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0");
 
-        UserCreateForm form = new UserCreateForm(
-                "login2",
-                "name",
-                "surname",
-                Role.EMPLOYEE,
-                "emai222l@wp.pl",
-                "password",
-                BigDecimal.ONE
-        );
-        UserDTO dto = new UserDTO(UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0"), form.getLogin(),
-                form.getName(), form.getSurname(), form.getRole(), form.getEmail(), form.getCostPerHour());
+        UserCreateForm form = UserTestFactory.createUserForm();
+
+        UserDTO dto = UserTestFactory.createUserEmployeeDTO();
 
 
         when(userService.createUser(adminUuid, form)).thenReturn(dto);

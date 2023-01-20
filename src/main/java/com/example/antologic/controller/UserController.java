@@ -38,8 +38,8 @@ class UserController {
 
     @GetMapping("/filter")
     public PageDTO filterUsers(@RequestParam UUID adminUuid,
-                                     @RequestBody(required = false) SearchCriteria searchCriteria,
-                                     Pageable page) {
+                               @RequestBody(required = false) SearchCriteria searchCriteria,
+                               Pageable page) {
         return userService.filterUsers(adminUuid, searchCriteria, page);
     }
 

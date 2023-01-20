@@ -1,6 +1,5 @@
 package com.example.antologic.user.dto;
 
-import com.example.antologic.project.Project;
 import com.example.antologic.user.Role;
 
 import java.math.BigDecimal;

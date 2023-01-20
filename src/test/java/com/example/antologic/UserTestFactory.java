@@ -3,6 +3,8 @@ package com.example.antologic;
 import com.example.antologic.user.Role;
 import com.example.antologic.user.User;
 import com.example.antologic.user.dto.UserCreateForm;
+import com.example.antologic.user.dto.UserDTO;
+import com.example.antologic.user.dto.UserMapper;
 import com.example.antologic.user.dto.UserUpdateForm;
 
 import java.math.BigDecimal;
@@ -56,5 +58,16 @@ public class UserTestFactory {
                 "emai222l@wp.pl",
                 "password",
                 BigDecimal.ONE);
+    }
+    public static UserDTO createUserEmployeeDTO(){
+        return UserMapper.toDto(new User(2L,
+                "loginEmployee",
+                "nameE",
+                "surnameE",
+                Role.EMPLOYEE,
+                "email@wp.pl",
+                "password",
+                BigDecimal.ONE,
+                new HashSet<>()));
     }
 }
