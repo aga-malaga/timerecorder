@@ -26,12 +26,11 @@ class AdminValidatorImplTest {
     private AdminValidatorImpl underTest;
 
     @Test
-    void validateUserAdmin() {
+    void checkIfUserIsAdmin() {
         //given
         User admin = UserTestFactory.createUserAdmin();
 
         given(userRepository.findUserByUuidAndRole(admin.getUuid(), admin.getRole())).willReturn(Optional.of(admin));
-
         //when
         //then
 

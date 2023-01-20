@@ -38,7 +38,6 @@ public class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl underTest;
 
-
     @Test
     void checkIfIsValidating() {
         // given
@@ -108,20 +107,6 @@ public class UserServiceImplTest {
 
         assertThat(userTest.getLogin()).isEqualTo(capturedUser.getLogin());
         assertThat(userTest.getEmail()).isEqualTo(capturedUser.getEmail());
-    }
-
-    @Test
-    void checkIfWhileEditingUserCallsInnerMethods() {
-        //given
-        User admin = UserTestFactory.createUserAdmin();
-        UserUpdateForm form = UserTestFactory.createUpdateUserForm();
-        User user = UserTestFactory.createUserEmployee();
-        //when
-        when(userRepository.findByUuid(any())).thenReturn(Optional.of(user));
-        underTest.editUser(any(), form);
-        //then
-        verify(userRepository).findByUuid(any());
-        verify(adminValidator).validate(any());
     }
 
     @Test

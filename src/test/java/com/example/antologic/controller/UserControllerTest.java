@@ -42,25 +42,12 @@ class UserControllerTest {
     private MockMvc mockMvc;
     private Validator validator;
 
-    private static Stream<Arguments> testInvalidData() {
-        return Stream.of(
-                arguments("", "testName", "testLastname", Role.ADMIN, "password", "email@email.com", BigDecimal.ONE),
-                arguments("testLogin", "", "testLastname", Role.ADMIN, "password", "email@email.com", BigDecimal.ONE),
-                arguments("testLogin", "testName", "", Role.ADMIN, "password", "email@email.com", BigDecimal.ONE),
-                arguments("testLogin", "testName", "testLastname", null, "password", "email@email.com", BigDecimal.ONE),
-                arguments("testLogin", "testName", "testLastname", Role.ADMIN, "", "email@email.com", BigDecimal.ONE),
-                arguments("testLogin", "testName", "testLastname", Role.ADMIN, "password", "", BigDecimal.ONE),
-                arguments("testLogin", "testName", "testLastname", Role.ADMIN, "password", "email@email.com", null),
-                arguments("", "testName", "", Role.ADMIN, "password", "email@email.com", BigDecimal.ONE),
-                arguments("", "testName", "", Role.ADMIN, "password", "", BigDecimal.ONE)
-        );
-
-    }
 
     @DisplayName("the checked form contains wrong email format")
     @Test
     void checkIfFormValidatesContent() {
-        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory())
+        {
             validator = factory.getValidator();
             UserCreateForm form = new UserCreateForm("login", "name", "surname", Role.EMPLOYEE, "email", "password", BigDecimal.ONE);
             Set<ConstraintViolation<UserCreateForm>> violations = validator.validate(form);
@@ -71,6 +58,7 @@ class UserControllerTest {
 
     @Test
     void checkIfReturnsListOfUsersDto() throws Exception {
+        //given
         UUID adminUuid = UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0");
 
         mockMvc
@@ -97,7 +85,7 @@ class UserControllerTest {
                 BigDecimal.ONE
         );
         UserDTO dto = new UserDTO(UUID.fromString("8fcb1ba3-bbeb-40b2-8f74-9fab5071d3f0"), form.getLogin(),
-                form.getName(), form.getSurname(), form.getRole(), form.getEmail(), form.getCostPerHour(), new HashSet<>());
+                form.getName(), form.getSurname(), form.getRole(), form.getEmail(), form.getCostPerHour());
 
 
         when(userService.createUser(adminUuid, form)).thenReturn(dto);
@@ -138,5 +126,20 @@ class UserControllerTest {
                         .content(jsonString)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    private static Stream<Arguments> testInvalidData() {
+        return Stream.of(
+                arguments("", "testName", "testLastname", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "", "testLastname", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", null,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", Role.ADMIN,"", "email@email.com" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", Role.ADMIN,"password", "" , BigDecimal.ONE),
+                arguments("testLogin", "testName", "testLastname", Role.ADMIN,"password", "email@email.com" , null),
+                arguments("", "testName", "", Role.ADMIN,"password", "email@email.com" , BigDecimal.ONE),
+                arguments("", "testName", "", Role.ADMIN,"password", "" , BigDecimal.ONE)
+        );
+
     }
 }
