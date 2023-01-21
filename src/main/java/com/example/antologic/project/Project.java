@@ -1,5 +1,6 @@
 package com.example.antologic.project;
 
+import com.example.antologic.timeRecord.TimeRecord;
 import com.example.antologic.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,6 +63,9 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TimeRecord> timeRecords = new HashSet<>();
 
     public void addUser(User user) {
         users.add(user);

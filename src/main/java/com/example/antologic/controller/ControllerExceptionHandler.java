@@ -1,6 +1,7 @@
 package com.example.antologic.controller;
 
 import com.example.antologic.common.AlreadyExistsException;
+import com.example.antologic.common.ConflictException;
 import com.example.antologic.common.ErrorMessage;
 import com.example.antologic.common.NoContentException;
 import com.example.antologic.common.NotFoundException;
@@ -54,6 +55,17 @@ class ControllerExceptionHandler {
     @ExceptionHandler(NoContentException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMessage noContentException(NoContentException ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                LocalDateTime.now(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error("An error occurred processing request" + ex);
+        return message;
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorMessage conflictException(NoContentException ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 LocalDateTime.now(),
                 ex.getMessage(),

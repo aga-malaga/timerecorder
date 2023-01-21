@@ -1,6 +1,8 @@
 package com.example.antologic.user;
 
 import com.example.antologic.project.Project;
+import com.example.antologic.timeRecord.TimeRecord;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,6 +55,8 @@ public class User {
     private BigDecimal costPerHour;
     @ManyToMany(mappedBy = "users")
     private Set<Project> projects = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TimeRecord> timeRecords = new HashSet<>();
 
     @Override
     public int hashCode() {
