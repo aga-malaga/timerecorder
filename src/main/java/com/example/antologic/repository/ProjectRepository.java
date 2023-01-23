@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,19 +17,20 @@ import java.util.UUID;
 public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
     @EntityGraph(attributePaths = {"users"})
     boolean existsByUuid(UUID uuid);
+
     @EntityGraph(attributePaths = {"users.user"})
     Page<Project> findAll(@Nullable Specification<Project> spec, Pageable pageable);
+
     @EntityGraph(attributePaths = {"users"})
     boolean existsByName(String name);
+
     @EntityGraph(attributePaths = {"users"})
     Optional<Project> findProjectByUuid(UUID projectUuid);
+
     @EntityGraph(attributePaths = {"users.user"})
     Page<Project> findAll(Pageable page);
+
     @EntityGraph(attributePaths = {"users"})
     void removeProjectByUuid(UUID projectUuid);
-
-    @EntityGraph(attributePaths = {"users"})
-    Optional<Project> findProjectByUuidAndUsersUuid(UUID projectUuid, UUID userUuid);
-
 
 }

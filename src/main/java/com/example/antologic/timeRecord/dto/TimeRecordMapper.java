@@ -1,19 +1,22 @@
 package com.example.antologic.timeRecord.dto;
 
-import com.example.antologic.project.Project;
-import com.example.antologic.repository.ProjectRepository;
-import com.example.antologic.repository.UserRepository;
+import com.example.antologic.projectUser.ProjectUser;
 import com.example.antologic.timeRecord.TimeRecord;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class TimeRecordMapper {
 
-    private final ProjectRepository projectRepository;
 
-    private final UserRepository userRepository;
+    public static TimeRecord toTimeRecord(TimeRecordForm form, ProjectUser projectUser) {
+        TimeRecord timeRecord = new TimeRecord();
+        timeRecord.setStart(form.getStart());
+        timeRecord.setStop(form.getStop());
+        return timeRecord;
+    }
 
-    public static Project toProject(TimeRecordForm form, Project project) {
-        return new Project();
+    public static TimeRecordDTO toTimeDTO(TimeRecord timeRecord){
+        return new TimeRecordDTO(timeRecord.getUuid(),timeRecord.getStart(),timeRecord.getStop(),
+                timeRecord.getProjectUser().getProject().getUuid());
     }
 }

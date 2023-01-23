@@ -1,8 +1,5 @@
 package com.example.antologic.user;
 
-import com.example.antologic.project.Project;
-import com.example.antologic.timeRecord.TimeRecord;
-import jakarta.persistence.CascadeType;
 import com.example.antologic.projectUser.ProjectUser;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -66,9 +63,6 @@ public class User {
             orphanRemoval = true
     )
     private List<ProjectUser> projects = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TimeRecord> timeRecords = new HashSet<>();
 
 }
 

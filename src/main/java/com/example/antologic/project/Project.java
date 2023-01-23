@@ -1,7 +1,6 @@
 package com.example.antologic.project;
 
 import com.example.antologic.projectUser.ProjectUser;
-import com.example.antologic.timeRecord.TimeRecord;
 import com.example.antologic.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -37,13 +35,13 @@ import java.util.UUID;
 @Table(name = "projects")
 public class Project {
 
+    @EqualsAndHashCode.Include
+    @Column(name = "uuid")
+    private final UUID uuid = UUID.randomUUID();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @EqualsAndHashCode.Include
-    @Column(name = "uuid")
-    private final UUID uuid = UUID.randomUUID();
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -67,17 +65,11 @@ public class Project {
     )
     private List<ProjectUser> users = new ArrayList<>();
 
+
     public void addUser(User user, LocalDateTime enter, LocalDateTime leave) {
         ProjectUser projectUser = new ProjectUser(this, user, enter, leave);
         users.add(projectUser);
         user.getProjects().add(projectUser);
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TimeRecord> timeRecords = new HashSet<>();
-
-    public void addUser(User user) {
-        users.add(user);
-        user.getProjects().add(this);
     }
 
     public void removeUser(User user) {
@@ -94,19 +86,6 @@ public class Project {
                 projectUser.setUser(null);
             }
         }
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final Project project = (Project) o;
-        return id.equals(project.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
 

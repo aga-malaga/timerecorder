@@ -65,7 +65,7 @@ class ControllerExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public ErrorMessage conflictException(NoContentException ex, WebRequest request) {
+    public ErrorMessage conflictException(ConflictException ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 LocalDateTime.now(),
                 ex.getMessage(),

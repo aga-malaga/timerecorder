@@ -13,6 +13,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface ProjectUserRepository extends JpaRepository<ProjectUser,
@@ -24,7 +25,12 @@ public interface ProjectUserRepository extends JpaRepository<ProjectUser,
     @EntityGraph(attributePaths = {"project", "user"})
     Page<ProjectUser> findAll(@Nullable Specification<Project> spec, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"projects", "users"})
+    @EntityGraph(attributePaths = {"project", "user"})
     Page<ProjectUser> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"project","user"})
+    Optional<ProjectUser> findProjectUserByUser(User user);
+
+
 
 }
