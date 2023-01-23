@@ -1,44 +1,49 @@
 package com.example.antologic.project;
 
+import com.example.antologic.projectUser.ProjectUser;
 import com.example.antologic.timeRecord.TimeRecord;
 import com.example.antologic.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "projects")
 public class Project {
 
-    @Column(name = "uuid")
-    private final UUID uuid = UUID.randomUUID();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @EqualsAndHashCode.Include
+    @Column(name = "uuid")
+    private final UUID uuid = UUID.randomUUID();
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -54,15 +59,18 @@ public class Project {
     @Column(name = "budget")
     private BigDecimal budget;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = "project_user",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+    @OneToMany(
+            mappedBy = "project",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
     )
-    private Set<User> users = new HashSet<>();
+    private List<ProjectUser> users = new ArrayList<>();
+
+    public void addUser(User user, LocalDateTime enter, LocalDateTime leave) {
+        ProjectUser projectUser = new ProjectUser(this, user, enter, leave);
+        users.add(projectUser);
+        user.getProjects().add(projectUser);
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TimeRecord> timeRecords = new HashSet<>();
@@ -73,13 +81,19 @@ public class Project {
     }
 
     public void removeUser(User user) {
-        users.remove(user);
-        user.getProjects().remove(this);
-    }
+        for (Iterator<ProjectUser> iterator = users.iterator();
+             iterator.hasNext(); ) {
+            ProjectUser projectUser = iterator.next();
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid, name);
+            if (projectUser.getProject().equals(this) &&
+                    projectUser.getUser().equals(user)) {
+                iterator.remove();
+                projectUser.getUser().getProjects().remove(projectUser);
+                users.remove(projectUser);
+                projectUser.setProject(null);
+                projectUser.setUser(null);
+            }
+        }
     }
 
     @Override
@@ -87,7 +101,12 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Project project = (Project) o;
-        return uuid.equals(project.uuid) && name.equals(project.name);
+        return id.equals(project.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
 

@@ -3,7 +3,7 @@ package com.example.antologic.user.dto;
 import com.example.antologic.user.Role;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public record UserDTO(
@@ -14,7 +14,7 @@ public record UserDTO(
         Role role,
         String email,
         BigDecimal costPerHour,
-        Set<String> projects)
-{
+        List<String> projectName
+) {
 }
 

@@ -2,6 +2,7 @@ package com.example.antologic.service;
 
 import com.example.antologic.common.dto.PageDTO;
 import com.example.antologic.filter.ProjectSearchCriteria;
+import com.example.antologic.project.dto.ProjectAddForm;
 import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectShiftForm;
@@ -16,7 +17,7 @@ public interface ProjectService {
 
     ProjectDTO createProject(UUID managerUuid, ProjectForm projectForm);
 
-    boolean addUserToProject(UUID managerUuid, ProjectShiftForm addForm);
+    boolean addUserToProject(UUID managerUuid, ProjectAddForm addForm);
 
     boolean removeUserFromProject(UUID managerUuid, ProjectShiftForm removeForm);
 

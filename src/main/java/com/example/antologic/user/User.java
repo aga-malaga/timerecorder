@@ -3,35 +3,41 @@ package com.example.antologic.user;
 import com.example.antologic.project.Project;
 import com.example.antologic.timeRecord.TimeRecord;
 import jakarta.persistence.CascadeType;
+import com.example.antologic.projectUser.ProjectUser;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
 public class User {
 
+    @EqualsAndHashCode.Include
     @Column(name = "uuid")
     private final UUID uuid = UUID.randomUUID();
     @Id
@@ -53,21 +59,17 @@ public class User {
     private String password;
     @Column(name = "cost_per_hour", nullable = false)
     private BigDecimal costPerHour;
-    @ManyToMany(mappedBy = "users")
-    private Set<Project> projects = new HashSet<>();
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private List<ProjectUser> projects = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TimeRecord> timeRecords = new HashSet<>();
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid, email);
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final User user = (User) o;
-        return uuid.equals(user.uuid) && email.equals(user.email);
-    }
 }
+
+

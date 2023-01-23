@@ -9,12 +9,14 @@ import com.example.antologic.customSecurity.ManagerValidator;
 import com.example.antologic.filter.ProjectSearchCriteria;
 import com.example.antologic.project.Project;
 import com.example.antologic.project.ProjectSpecification;
+import com.example.antologic.project.dto.ProjectAddForm;
 import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectMapper;
 import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectUpdateForm;
 import com.example.antologic.repository.ProjectRepository;
+import com.example.antologic.repository.ProjectUserRepository;
 import com.example.antologic.repository.UserRepository;
 import com.example.antologic.user.User;
 import lombok.AllArgsConstructor;
@@ -37,6 +39,8 @@ class ProjectServiceImpl implements ProjectService {
     private final UserRepository userRepository;
 
     private final ManagerValidator managerValidator;
+
+    private final ProjectUserRepository projectUserRepository;
 
     public PageDTO findProjects(UUID managerUuid, int pageNo, int pageSize, String sortBy) {
         validate(managerUuid);
@@ -63,7 +67,7 @@ class ProjectServiceImpl implements ProjectService {
     }
 
     @Transactional
-    public boolean addUserToProject(UUID managerUuid, ProjectShiftForm addForm) {
+    public boolean addUserToProject(UUID managerUuid, ProjectAddForm addForm) {
         validate(managerUuid);
 
         final Project project = projectRepository.findProjectByUuid(addForm.getProjectUuid()).orElseThrow(() ->
@@ -72,12 +76,12 @@ class ProjectServiceImpl implements ProjectService {
         final User user = userRepository.findByUuid(addForm.getUserUuid()).orElseThrow(() ->
                 new NotFoundException("User does not exist"));
 
-        if (project.getUsers().contains(user)) {
+        if (projectUserRepository.findByProjectAndUser(project, user).isPresent()) {
             throw new AlreadyExistsException("This user is already in the project");
         }
 
-        project.addUser(user);
-        projectRepository.save(project);
+        project.addUser(user, addForm.getEnterOn(), addForm.getLeaveOn());
+
         return true;
     }
 
@@ -91,8 +95,12 @@ class ProjectServiceImpl implements ProjectService {
         final User user = userRepository.findByUuid(removeForm.getUserUuid()).orElseThrow(() ->
                 new NotFoundException("User does not exist"));
 
+        if (!projectUserRepository.findByProjectAndUser(project, user).isPresent()) {
+            throw new NotFoundException("This user is not in the project");
+        }
+
         project.removeUser(user);
-        projectRepository.save(project);
+
         return true;
     }
 

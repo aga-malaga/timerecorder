@@ -1,6 +1,7 @@
 package com.example.antologic.user.dto;
 
 
+import com.example.antologic.repository.ProjectUserRepository;
 import com.example.antologic.user.User;
 import lombok.AllArgsConstructor;
 
@@ -9,6 +10,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public
 class UserMapper {
+
+    private final ProjectUserRepository projectUserRepository;
+
     public static User toUser(UserCreateForm userCreateForm) {
         User user = new User();
         user.setLogin(userCreateForm.getLogin());
@@ -23,6 +27,7 @@ class UserMapper {
     }
 
     public static UserDTO toDto(User user) {
+
         return new UserDTO(
                 user.getUuid(),
                 user.getLogin(),
@@ -31,7 +36,9 @@ class UserMapper {
                 user.getRole(),
                 user.getEmail(),
                 user.getCostPerHour(),
-                user.getProjects().stream().map(p -> p.getName()).collect(Collectors.toSet()
-                ));
+                user.getProjects().stream()
+                        .map(pu -> pu.getProject().getName())
+                        .collect(Collectors.toList())
+        );
     }
 }

@@ -1,6 +1,8 @@
 package com.example.antologic.project;
 
 import com.example.antologic.filter.ProjectSearchCriteria;
+import com.example.antologic.projectUser.ProjectUser;
+import com.example.antologic.user.User;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -41,8 +43,8 @@ public class ProjectSpecification implements Specification<Project> {
             projectSearchCriteria.userUuid().forEach(uuid -> {
                 predicates.add(
                         builder.isTrue(
-                                root.join("users").get("uuid")
-                                        .in(uuid)
+                                root.join(Project.Fields.users)
+                                        .get(ProjectUser.Fields.user).get(User.Fields.uuid).in(uuid)
                         )
                 );
             });

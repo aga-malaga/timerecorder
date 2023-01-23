@@ -2,6 +2,7 @@ package com.example.antologic.controller;
 
 import com.example.antologic.common.dto.PageDTO;
 import com.example.antologic.filter.ProjectSearchCriteria;
+import com.example.antologic.project.dto.ProjectAddForm;
 import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectShiftForm;
@@ -54,8 +55,8 @@ class ProjectController {
 
     @PostMapping("/addUser")
     public void addUserToProject(@RequestParam UUID managerUuid,
-                                 @RequestBody @Valid ProjectShiftForm shiftForm) {
-        projectService.addUserToProject(managerUuid, shiftForm);
+                                 @RequestBody @Valid ProjectAddForm addForm) {
+        projectService.addUserToProject(managerUuid, addForm);
     }
 
     @DeleteMapping("/removeUser")
