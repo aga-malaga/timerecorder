@@ -2,6 +2,7 @@ package com.example.antologic.project.dto;
 
 import com.example.antologic.project.Project;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProjectMapper {
@@ -25,9 +26,14 @@ public class ProjectMapper {
                 project.getStart(),
                 project.getStop(),
                 project.getBudget(),
-                project.getUsers().stream().map(user -> {
-                    return new ProjectUserDTO(user.getUuid(), user.getName(), user.getSurname());
-                }).collect(Collectors.toSet())
+                projectUserDTO(project)
         );
+    }
+
+    public static List<ProjectUserDTO> projectUserDTO(Project project) {
+        return project.getUsers().stream()
+                .map(pu -> {
+                    return new ProjectUserDTO(pu.getUser().getUuid(), pu.getUser().getName(), pu.getUser().getSurname());
+                }).collect(Collectors.toList());
     }
 }

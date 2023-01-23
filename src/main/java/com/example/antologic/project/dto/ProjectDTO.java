@@ -2,7 +2,7 @@ package com.example.antologic.project.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public record ProjectDTO(UUID uuid,
@@ -11,5 +11,5 @@ public record ProjectDTO(UUID uuid,
                          LocalDateTime start,
                          LocalDateTime stop,
                          BigDecimal budget,
-                         Set<ProjectUserDTO> userDTO) {
+                         List<ProjectUserDTO> userDTO) {
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -17,4 +18,8 @@ public class ProjectAddForm {
     private UUID projectUuid;
     @NotNull
     private UUID userUuid;
+    @NotNull
+    private LocalDateTime enterOn;
+    @NotNull
+    private LocalDateTime leaveOn;
 }

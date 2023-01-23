@@ -10,8 +10,8 @@ import com.example.antologic.filter.SearchCriteria;
 import com.example.antologic.repository.UserRepository;
 import com.example.antologic.user.User;
 import com.example.antologic.user.UserSpecification;
-import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserCreateForm;
+import com.example.antologic.user.dto.UserDTO;
 import com.example.antologic.user.dto.UserMapper;
 import com.example.antologic.user.dto.UserUpdateForm;
 import lombok.AllArgsConstructor;
@@ -32,16 +32,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AdminValidator validateAdmin;
 
-    public void validate(UUID admin) {
-        validateAdmin.validate(admin);
-    }
-
     public PageDTO findUsers(UUID adminUuid, int pageNo, int pageSize, String sortBy) {
         validate(adminUuid);
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         final Page<UserDTO> pageUserDTO = userRepository.findAll(p).map(UserMapper::toDto);
         return PageMapper.toDtoU(pageUserDTO);
+    }
+
+    public void validate(UUID admin) {
+        validateAdmin.validate(admin);
     }
 
     @Override
