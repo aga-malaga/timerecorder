@@ -17,13 +17,13 @@ import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "ProjectUser")
-@Table(name = "project_user")
 @NoArgsConstructor
 @FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
+@Entity(name = "ProjectUser")
+@Table(name = "project_user")
 public class ProjectUser {
 
     @EmbeddedId
@@ -49,5 +49,4 @@ public class ProjectUser {
         this.leaveOn = leave;
     }
 }
-
 

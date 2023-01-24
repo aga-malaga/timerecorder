@@ -58,7 +58,7 @@ class ProjectServiceImpl implements ProjectService {
         validate(managerUuid);
 
         if (projectRepository.existsByName(projectForm.getName())) {
-            throw new AlreadyExistsException("Project with this name already exists");
+            throw new AlreadyExistsException("Project with name " + projectForm.getName() + " already exists");
         }
         Project project = ProjectMapper.toProject(projectForm);
         projectRepository.save(project);
@@ -117,7 +117,9 @@ class ProjectServiceImpl implements ProjectService {
         return PageMapper.toDtoProject(pageUserDto);
     }
 
+
     @Override
+    @Transactional
     public void editProject(final UUID managerUuid, final ProjectUpdateForm updateForm) {
         validate(managerUuid);
 
@@ -125,12 +127,15 @@ class ProjectServiceImpl implements ProjectService {
         final Project project = projectRepository.findProjectByUuid(uuid).orElseThrow(() ->
                 new NotFoundException("Project with id " + uuid + " not found"));
 
+        if (projectRepository.existsByName(updateForm.getName())) {
+            throw new AlreadyExistsException("Project with name " + updateForm.getName() + " already exists");
+        }
+
         project.setName(updateForm.getName());
         project.setDescription(updateForm.getDescription());
         project.setStartDate(updateForm.getStart());
         project.setEndDate(updateForm.getStop());
         project.setBudget(updateForm.getBudget());
-        projectRepository.save(project);
     }
 
     @Override

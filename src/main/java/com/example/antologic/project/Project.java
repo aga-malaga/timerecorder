@@ -32,7 +32,7 @@ import java.util.UUID;
 @FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "projects")
+@Table(name = "project")
 public class Project {
 
     @EqualsAndHashCode.Include
