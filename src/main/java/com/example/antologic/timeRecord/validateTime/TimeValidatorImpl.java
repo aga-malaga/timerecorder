@@ -14,6 +14,6 @@ class TimeValidatorImpl implements TimeValidator {
     public boolean validateTime(final TimeRecordForm form, final ProjectUser projectUser, final Project project) {
         final LocalDateTime start = form.getStart();
         final LocalDateTime stop = form.getStop();
-        return start.isAfter(projectUser.getEnterOn()) && start.isAfter(project.getStart()) && stop.isBefore(projectUser.getLeaveOn()) && stop.isBefore(project.getStop());
+        return start.isAfter(projectUser.getEnterOn()) && start.isAfter(project.getStartDate()) && stop.isBefore(projectUser.getLeaveOn()) && stop.isBefore(project.getEndDate());
     }
 }

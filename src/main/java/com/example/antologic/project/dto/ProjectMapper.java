@@ -37,8 +37,8 @@ public class ProjectMapper {
                 project.getUuid(),
                 project.getName(),
                 project.getDescription(),
-                project.getStart(),
-                project.getStop(),
+                project.getStartDate(),
+                project.getEndDate(),
                 project.getBudget(),
                 budget,
                 projectUserDTO(project)

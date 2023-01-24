@@ -63,7 +63,7 @@ class ProjectServiceImpl implements ProjectService {
                 .stream().map(project -> ProjectMapper.toDtoBudget(project, countBudget(project)))
                 .collect(Collectors.toList());
         final Page<ProjectDTOBudget> page = new PageImpl<>(projectDTOPage);
-        return PageMapper.toDtoP(page);
+        return PageMapper.toDtoProject(page);
     }
 
     private void validate(final UUID managerUuid) {
@@ -108,7 +108,7 @@ class ProjectServiceImpl implements ProjectService {
             throw new AlreadyExistsException("This user is already in the project");
         }
 
-        if (project.getStart().isAfter(addForm.getEnterOn()) || project.getStop().isBefore(addForm.getLeaveOn())) {
+        if (project.getStartDate().isAfter(addForm.getEnterOn()) || project.getEndDate().isBefore(addForm.getLeaveOn())) {
             throw new ConflictException("Project starts or ends in different time period");
         }
 
@@ -148,7 +148,7 @@ class ProjectServiceImpl implements ProjectService {
         final Page<ProjectDTOBudget> projectDTOPage = projectRepository.findAll(specification, page)
                 .map(project -> ProjectMapper.toDtoBudget(project, countBudget(project)));
 
-        return PageMapper.toDtoP(projectDTOPage);
+        return PageMapper.toDtoProject(projectDTOPage);
     }
 
     @Override
