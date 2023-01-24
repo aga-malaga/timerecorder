@@ -40,6 +40,7 @@ class TimeRecordServiceImpl implements TimeRecordService {
 
     private final TimeValidator timeValidator;
 
+
     public TimeRecordDTO createRecord(TimeRecordForm form) {
 
         final Project project = projectRepository.findProjectByUuid(form.getProjectUuid())
@@ -54,12 +55,15 @@ class TimeRecordServiceImpl implements TimeRecordService {
         if (!timeValidator.validateTime(form, projectAndUser, project)) {
             throw new ConflictException("Time conflict occurred");
         }
-        if (timeRecordRepository.findTimeRecordBetween(form.getStart(), form.getStop()).size() > 0) {
+        if (timeRecordRepository.existTimeRecordBetween(form.getStart(), form.getStop(), form.getUserUuid())) {
             throw new ConflictException("This time period is already occupied");
         }
         TimeRecord timeRecord = TimeRecordMapper.toTimeRecord(form, projectAndUser);
         timeRecord.setProjectUser(projectAndUser);
+        timeRecord.setSalary(user.getCostPerHour());
+
         timeRecordRepository.save(timeRecord);
+
         return TimeRecordMapper.toTimeDTO(timeRecord);
     }
 
@@ -71,13 +75,13 @@ class TimeRecordServiceImpl implements TimeRecordService {
                 new NotFoundException("User not found in any project"));
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        final Page<TimeRecordDTO> timeRecords = timeRecordRepository.findAllByProjectUser(projectUser,p)
+        final Page<TimeRecordDTO> timeRecords = timeRecordRepository.findAllByProjectUser(projectUser, p)
                 .map(TimeRecordMapper::toTimeDTO);
         return PageMapper.toDtoTR(timeRecords);
     }
 
     @Transactional
-    public void deleteRecord(UUID userUuid, UUID recordUuid){
+    public void deleteRecord(UUID userUuid, UUID recordUuid) {
         userRepository.findByUuid(userUuid).orElseThrow(() ->
                 new NotFoundException("User not found"));
 

@@ -2,10 +2,12 @@ package com.example.antologic.project.dto;
 
 import com.example.antologic.project.Project;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProjectMapper {
+
 
     public static Project toProject(ProjectForm projectForm) {
         Project project = new Project();
@@ -30,10 +32,25 @@ public class ProjectMapper {
         );
     }
 
+ public static ProjectDTOBudget toDtoBudget(Project project, BigDecimal budget){
+        return new ProjectDTOBudget(
+                project.getUuid(),
+                project.getName(),
+                project.getDescription(),
+                project.getStart(),
+                project.getStop(),
+                project.getBudget(),
+                budget,
+                projectUserDTO(project)
+        );
+ }
+
     public static List<ProjectUserDTO> projectUserDTO(Project project) {
         return project.getUsers().stream()
                 .map(pu -> {
                     return new ProjectUserDTO(pu.getUser().getUuid(), pu.getUser().getName(), pu.getUser().getSurname());
                 }).collect(Collectors.toList());
     }
+
+
 }

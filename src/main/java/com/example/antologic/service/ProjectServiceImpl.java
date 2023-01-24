@@ -1,6 +1,7 @@
 package com.example.antologic.service;
 
 import com.example.antologic.common.AlreadyExistsException;
+import com.example.antologic.common.ConflictException;
 import com.example.antologic.common.NoContentException;
 import com.example.antologic.common.NotFoundException;
 import com.example.antologic.common.dto.PageDTO;
@@ -11,16 +12,20 @@ import com.example.antologic.project.Project;
 import com.example.antologic.project.ProjectSpecification;
 import com.example.antologic.project.dto.ProjectAddForm;
 import com.example.antologic.project.dto.ProjectDTO;
+import com.example.antologic.project.dto.ProjectDTOBudget;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectMapper;
 import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectUpdateForm;
 import com.example.antologic.repository.ProjectRepository;
 import com.example.antologic.repository.ProjectUserRepository;
+import com.example.antologic.repository.TimeRecordRepository;
 import com.example.antologic.repository.UserRepository;
+import com.example.antologic.timeRecord.TimeRecord;
 import com.example.antologic.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,7 +33,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -38,6 +48,8 @@ class ProjectServiceImpl implements ProjectService {
 
     private final UserRepository userRepository;
 
+    private final TimeRecordRepository timeRecordRepository;
+
     private final ManagerValidator managerValidator;
 
     private final ProjectUserRepository projectUserRepository;
@@ -46,12 +58,28 @@ class ProjectServiceImpl implements ProjectService {
         validate(managerUuid);
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        final Page<ProjectDTO> projectDTOPage = projectRepository.findAll(p).map(ProjectMapper::toDto);
-        return PageMapper.toDtoP(projectDTOPage);
+
+        final List<ProjectDTOBudget> projectDTOPage = projectRepository.findAll(p)
+                .stream().map(project -> ProjectMapper.toDtoBudget(project, countBudget(project)))
+                .collect(Collectors.toList());
+        final Page<ProjectDTOBudget> page = new PageImpl<>(projectDTOPage);
+        return PageMapper.toDtoP(page);
     }
 
     private void validate(final UUID managerUuid) {
         managerValidator.validateManager(managerUuid);
+    }
+
+    public BigDecimal countBudget(Project project) {
+
+        final List<TimeRecord> timeRecordList = timeRecordRepository.findTimeRecordsByProject(project);
+
+        final BigDecimal budget = timeRecordList.stream()
+                .map(tr -> tr.getSalary().multiply(BigDecimal.valueOf(Duration.between(tr.getStart(), tr.getStop()).toHours())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return budget.multiply(BigDecimal.valueOf(100).divide(project.getBudget(), RoundingMode.HALF_UP));
+
     }
 
     public ProjectDTO createProject(UUID managerUuid, ProjectForm projectForm) {
@@ -78,6 +106,10 @@ class ProjectServiceImpl implements ProjectService {
 
         if (projectUserRepository.findByProjectAndUser(project, user).isPresent()) {
             throw new AlreadyExistsException("This user is already in the project");
+        }
+
+        if (project.getStart().isAfter(addForm.getEnterOn()) || project.getStop().isBefore(addForm.getLeaveOn())) {
+            throw new ConflictException("Project starts or ends in different time period");
         }
 
         project.addUser(user, addForm.getEnterOn(), addForm.getLeaveOn());
@@ -113,8 +145,10 @@ class ProjectServiceImpl implements ProjectService {
         }
         Specification<Project> specification = new ProjectSpecification(searchCriteria);
 
-        final Page<ProjectDTO> pageUserDto = projectRepository.findAll(specification, page).map(ProjectMapper::toDto);
-        return PageMapper.toDtoP(pageUserDto);
+        final Page<ProjectDTOBudget> projectDTOPage = projectRepository.findAll(specification, page)
+                .map(project -> ProjectMapper.toDtoBudget(project, countBudget(project)));
+
+        return PageMapper.toDtoP(projectDTOPage);
     }
 
     @Override

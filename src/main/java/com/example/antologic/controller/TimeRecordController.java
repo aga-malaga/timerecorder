@@ -41,7 +41,7 @@ class TimeRecordController {
     }
 
     @DeleteMapping
-    public void removeUserFromProject(@RequestParam UUID userUuid,
+    public void removeRecord(@RequestParam UUID userUuid,
                                       @RequestParam UUID recordUuid) {
         timeRecordService.deleteRecord(userUuid, recordUuid);
     }

@@ -13,4 +13,5 @@ public interface TimeRecordService {
     PageDTO findRecords(UUID userUuid, int pageNo, int pageSize, String sortBy);
 
     void deleteRecord(UUID userUuid, UUID recordUuid);
+
 }

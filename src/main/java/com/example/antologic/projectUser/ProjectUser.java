@@ -30,6 +30,13 @@ import java.util.Objects;
 @Setter
 public class ProjectUser {
 
+    @OneToMany(
+            mappedBy = "projectUser",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    List<TimeRecord> timeRecords = new ArrayList<>();
     @EmbeddedId
     private ProjectUserId id;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,13 +49,6 @@ public class ProjectUser {
     private LocalDateTime enterOn;
     @Column(name = "leave_on")
     private LocalDateTime leaveOn;
-    @OneToMany(
-            mappedBy = "projectUser",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            orphanRemoval = true
-    )
-    List<TimeRecord> timeRecords = new ArrayList<>();
 
     public ProjectUser(final Project project, final User user, final LocalDateTime enter, final LocalDateTime leave) {
         this.project = project;
@@ -59,16 +59,16 @@ public class ProjectUser {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(project, user);
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final ProjectUser that = (ProjectUser) o;
         return project.equals(that.project) && user.equals(that.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(project, user);
     }
 }
 

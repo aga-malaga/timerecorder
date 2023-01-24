@@ -4,14 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 @Getter
-@Setter
 @Table(name = "project_user_id")
 public class ProjectUserId implements Serializable {
     @Column(name = "project_id")

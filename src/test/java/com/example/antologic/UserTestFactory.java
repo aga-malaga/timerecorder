@@ -1,5 +1,6 @@
 package com.example.antologic;
 
+import com.example.antologic.projectUser.ProjectUser;
 import com.example.antologic.user.Role;
 import com.example.antologic.user.User;
 import com.example.antologic.user.dto.UserCreateForm;
@@ -8,7 +9,9 @@ import com.example.antologic.user.dto.UserMapper;
 import com.example.antologic.user.dto.UserUpdateForm;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public class UserTestFactory {
@@ -22,7 +25,7 @@ public class UserTestFactory {
                 "email@gmail.com",
                 "password",
                 BigDecimal.ONE,
-                new HashSet<>());
+                new ArrayList<>());
     }
 
     public static User createUserEmployee(){
@@ -34,7 +37,8 @@ public class UserTestFactory {
                 "email@wp.pl",
                 "password",
                 BigDecimal.ONE,
-                new HashSet<>());
+                new ArrayList<>() {
+                });
     }
 
     public static UserCreateForm createUserForm(){
@@ -68,6 +72,6 @@ public class UserTestFactory {
                 "email@wp.pl",
                 "password",
                 BigDecimal.ONE,
-                new HashSet<>()));
+                new ArrayList<>()));
     }
 }
