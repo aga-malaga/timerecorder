@@ -10,9 +10,9 @@ import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 public class ProjectSpecification implements Specification<Project> {
@@ -24,22 +24,22 @@ public class ProjectSpecification implements Specification<Project> {
 
         final List<Predicate> predicates = new ArrayList<>();
 
-        if (projectSearchCriteria.name() != null) {
+        if (Objects.nonNull(projectSearchCriteria.name())) {
             predicates.add(builder.like(
                     builder.lower(
-                            root.<String>get(
-                                    "name")
+                            root.get(
+                                    Project.Fields.name)
                     ), builder.lower(
                             builder.literal(
                                     "%" + projectSearchCriteria.name() + "%"))));
         }
-        if (projectSearchCriteria.start() != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.<LocalDateTime>get("start"), projectSearchCriteria.start()));
+        if (Objects.nonNull(projectSearchCriteria.start())) {
+            predicates.add(builder.greaterThanOrEqualTo(root.get(Project.Fields.startDate), projectSearchCriteria.start()));
         }
-        if (projectSearchCriteria.stop() != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.<LocalDateTime>get("stop"), projectSearchCriteria.stop()));
+        if (Objects.nonNull(projectSearchCriteria.stop())) {
+            predicates.add(builder.lessThanOrEqualTo(root.get(Project.Fields.endDate), projectSearchCriteria.stop()));
         }
-        if (projectSearchCriteria.userUuid() != null && projectSearchCriteria.userUuid().size() > 0) {
+        if (Objects.nonNull(projectSearchCriteria.userUuid()) && projectSearchCriteria.userUuid().size() > 0) {
             projectSearchCriteria.userUuid().forEach(uuid -> {
                 predicates.add(
                         builder.isTrue(

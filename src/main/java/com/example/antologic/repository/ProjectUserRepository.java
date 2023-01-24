@@ -19,7 +19,7 @@ public interface ProjectUserRepository extends JpaRepository<ProjectUser,
     @EntityGraph(attributePaths = {"project", "user"})
     Optional<ProjectUser> findByProjectAndUser(Project project, User user);
 
-    @EntityGraph(attributePaths = {"project", "user"})
+    @EntityGraph(attributePaths = {"projects", "users"})
     Page<ProjectUser> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"project", "user"})

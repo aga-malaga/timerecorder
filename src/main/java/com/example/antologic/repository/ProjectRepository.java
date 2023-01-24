@@ -15,19 +15,17 @@ import java.util.UUID;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
-
     boolean existsByUuid(UUID uuid);
-
-    boolean existsByName(String name);
 
     @EntityGraph(attributePaths = {"users.user"})
     Page<Project> findAll(@Nullable Specification<Project> spec, Pageable pageable);
 
+    boolean existsByName(String name);
+
+    Optional<Project> findProjectByUuid(UUID projectUuid);
+
     @EntityGraph(attributePaths = {"users.user"})
     Page<Project> findAll(Pageable page);
-
-    @EntityGraph(attributePaths = {"users"})
-    Optional<Project> findProjectByUuid(UUID projectUuid);
 
     void removeProjectByUuid(UUID projectUuid);
 

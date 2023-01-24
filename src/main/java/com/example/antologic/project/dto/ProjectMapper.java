@@ -13,8 +13,8 @@ public class ProjectMapper {
         Project project = new Project();
         project.setName(projectForm.getName());
         project.setDescription(projectForm.getDescription());
-        project.setStart(projectForm.getStart());
-        project.setStop(projectForm.getStop());
+        project.setStartDate(projectForm.getStartDate());
+        project.setEndDate(projectForm.getEndDate());
         project.setBudget(projectForm.getBudget());
         return project;
     }
@@ -25,8 +25,8 @@ public class ProjectMapper {
                 project.getUuid(),
                 project.getName(),
                 project.getDescription(),
-                project.getStart(),
-                project.getStop(),
+                project.getStartDate(),
+                project.getEndDate(),
                 project.getBudget(),
                 projectUserDTO(project)
         );

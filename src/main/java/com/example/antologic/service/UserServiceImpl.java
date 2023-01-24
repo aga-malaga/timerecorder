@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         final Page<UserDTO> pageUserDTO = userRepository.findAll(p).map(UserMapper::toDto);
-        return PageMapper.toDtoU(pageUserDTO);
+        return PageMapper.toDtoUser(pageUserDTO);
     }
 
     public void validate(UUID admin) {
@@ -93,6 +93,6 @@ public class UserServiceImpl implements UserService {
         Specification<User> specification = new UserSpecification(searchCriteria);
 
         final Page<UserDTO> pageUserDto = userRepository.findAll(specification, page).map(UserMapper::toDto);
-        return PageMapper.toDtoU(pageUserDto);
+        return PageMapper.toDtoUser(pageUserDto);
     }
 }

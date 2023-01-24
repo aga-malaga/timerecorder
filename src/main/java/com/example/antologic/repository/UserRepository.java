@@ -25,10 +25,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     User save(User user);
 
-    @EntityGraph(attributePaths = {"projects"})
     Optional<User> findUserByUuidAndRole(UUID uuid, Role role);
 
-    @EntityGraph(attributePaths = {"projects"})
     Optional<User> findByUuid(UUID uuid);
 
     boolean existsByUuid(UUID uuid);

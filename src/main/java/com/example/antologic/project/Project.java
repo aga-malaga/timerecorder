@@ -32,7 +32,7 @@ import java.util.UUID;
 @FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "projects")
+@Table(name = "project")
 public class Project {
 
     @EqualsAndHashCode.Include
@@ -48,11 +48,11 @@ public class Project {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "start")
-    private LocalDateTime start;
+    @Column(name = "start_date")
+    private LocalDateTime startDate;
 
-    @Column(name = "stop")
-    private LocalDateTime stop;
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 
     @Column(name = "budget")
     private BigDecimal budget;

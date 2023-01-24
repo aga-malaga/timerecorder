@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 public class UserSpecification implements Specification<User> {
@@ -20,7 +21,7 @@ public class UserSpecification implements Specification<User> {
     public Predicate toPredicate(final Root<User> root, final CriteriaQuery<?> query, final CriteriaBuilder builder) {
         final List<Predicate> predicates = new ArrayList<>();
 
-        if (searchCriteria.name() != null) {
+        if (Objects.nonNull(searchCriteria.name())) {
             predicates.add(builder.like(
                     builder.lower(
                             root.<String>get(
@@ -29,7 +30,7 @@ public class UserSpecification implements Specification<User> {
                             builder.literal(
                                     "%" + searchCriteria.name() + "%"))));
         }
-        if (searchCriteria.surname() != null) {
+        if (Objects.nonNull(searchCriteria.surname())) {
             predicates.add(builder.like(
                     builder.lower(
                             root.<String>get(
@@ -38,13 +39,13 @@ public class UserSpecification implements Specification<User> {
                             builder.literal(
                                     "%" + searchCriteria.surname() + "%"))));
         }
-        if (searchCriteria.costFrom() != null) {
+        if (Objects.nonNull(searchCriteria.costFrom())) {
             predicates.add(builder.greaterThanOrEqualTo(root.get("costPerHour"), searchCriteria.costFrom()));
         }
-        if (searchCriteria.costTo() != null) {
+        if (Objects.nonNull(searchCriteria.costTo())) {
             predicates.add(builder.lessThanOrEqualTo(root.get("costPerHour"), searchCriteria.costTo()));
         }
-        if (searchCriteria.role() != null) {
+        if (Objects.nonNull(searchCriteria.role())) {
             predicates.add(builder.equal(root.get("role"), searchCriteria.role()));
         }
 
