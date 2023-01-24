@@ -10,7 +10,6 @@ import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,17 +26,17 @@ public class ProjectSpecification implements Specification<Project> {
         if (projectSearchCriteria.name() != null) {
             predicates.add(builder.like(
                     builder.lower(
-                            root.<String>get(
-                                    "name")
+                            root.get(
+                                    Project.Fields.name)
                     ), builder.lower(
                             builder.literal(
                                     "%" + projectSearchCriteria.name() + "%"))));
         }
         if (projectSearchCriteria.start() != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.<LocalDateTime>get("start"), projectSearchCriteria.start()));
+            predicates.add(builder.greaterThanOrEqualTo(root.get(Project.Fields.startDate), projectSearchCriteria.start()));
         }
         if (projectSearchCriteria.stop() != null) {
-            predicates.add(builder.lessThanOrEqualTo(root.<LocalDateTime>get("stop"), projectSearchCriteria.stop()));
+            predicates.add(builder.lessThanOrEqualTo(root.get(Project.Fields.endDate), projectSearchCriteria.stop()));
         }
         if (projectSearchCriteria.userUuid() != null && projectSearchCriteria.userUuid().size() > 0) {
             projectSearchCriteria.userUuid().forEach(uuid -> {
