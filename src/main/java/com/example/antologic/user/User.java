@@ -63,7 +63,6 @@ public class User {
             orphanRemoval = true
     )
     private List<ProjectUser> projects = new ArrayList<>();
-
 }
 
 

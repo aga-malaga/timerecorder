@@ -21,9 +21,9 @@ public class ProjectForm {
     private String name;
     private String description = "";
     @NotNull(message = "start of the project is mandatory")
-    private LocalDateTime start;
+    private LocalDateTime startDate;
     @NotNull(message = "end of the project is mandatory")
-    private LocalDateTime stop;
+    private LocalDateTime endDate;
     @DecimalMin(value = "0", message = "budget must be greater than 0")
     private BigDecimal budget;
 

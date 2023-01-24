@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 public class PageMapper {
 
-    public static PageDTO toDtoU(Page<UserDTO> page) {
+    public static PageDTO toDtoUser(Page<UserDTO> page) {
         return new PageDTO(
                 page.getNumber(),
                 page.getSize(),
@@ -14,7 +14,7 @@ public class PageMapper {
                 page.getContent());
     }
 
-    public static PageDTO toDtoP(Page<ProjectDTO> page) {
+    public static PageDTO toDtoProject(Page<ProjectDTO> page) {
         return new PageDTO(
                 page.getNumber(),
                 page.getSize(),

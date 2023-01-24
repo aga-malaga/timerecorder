@@ -9,28 +9,30 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity(name = "ProjectUser")
 @Table(name = "project_user")
 @NoArgsConstructor
 @FieldNameConstants
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 public class ProjectUser {
 
     @EmbeddedId
     private ProjectUserId id;
-
+    @EqualsAndHashCode.Include
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("projectId")
     private Project project;
+    @EqualsAndHashCode.Include
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
     private User user;
@@ -45,19 +47,6 @@ public class ProjectUser {
         this.id = new ProjectUserId(project.getId(), user.getId());
         this.enterOn = enter;
         this.leaveOn = leave;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final ProjectUser that = (ProjectUser) o;
-        return project.equals(that.project) && user.equals(that.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(project, user);
     }
 }
 

@@ -8,8 +8,7 @@ import lombok.AllArgsConstructor;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public
-class UserMapper {
+public class UserMapper {
 
     private final ProjectUserRepository projectUserRepository;
 

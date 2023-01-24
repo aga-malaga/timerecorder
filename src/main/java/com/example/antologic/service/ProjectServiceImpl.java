@@ -47,7 +47,7 @@ class ProjectServiceImpl implements ProjectService {
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         final Page<ProjectDTO> projectDTOPage = projectRepository.findAll(p).map(ProjectMapper::toDto);
-        return PageMapper.toDtoP(projectDTOPage);
+        return PageMapper.toDtoProject(projectDTOPage);
     }
 
     private void validate(final UUID managerUuid) {
@@ -114,7 +114,7 @@ class ProjectServiceImpl implements ProjectService {
         Specification<Project> specification = new ProjectSpecification(searchCriteria);
 
         final Page<ProjectDTO> pageUserDto = projectRepository.findAll(specification, page).map(ProjectMapper::toDto);
-        return PageMapper.toDtoP(pageUserDto);
+        return PageMapper.toDtoProject(pageUserDto);
     }
 
     @Override
@@ -127,8 +127,8 @@ class ProjectServiceImpl implements ProjectService {
 
         project.setName(updateForm.getName());
         project.setDescription(updateForm.getDescription());
-        project.setStart(updateForm.getStart());
-        project.setStop(updateForm.getStop());
+        project.setStartDate(updateForm.getStart());
+        project.setEndDate(updateForm.getStop());
         project.setBudget(updateForm.getBudget());
         projectRepository.save(project);
     }
