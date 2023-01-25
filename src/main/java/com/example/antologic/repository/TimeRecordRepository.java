@@ -36,5 +36,7 @@ interface TimeRecordRepository extends JpaRepository<TimeRecord, Long>,
 
     void removeTimeRecordByUuid(UUID recordUuid);
 
+    TimeRecord findTimeRecordByUuid(UUID recordUuid);
+
 
 }

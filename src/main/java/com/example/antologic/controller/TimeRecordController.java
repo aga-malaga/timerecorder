@@ -1,16 +1,17 @@
 package com.example.antologic.controller;
 
 import com.example.antologic.common.dto.PageDTO;
-import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.service.TimeRecordService;
 import com.example.antologic.timeRecord.dto.TimeRecordDTO;
 import com.example.antologic.timeRecord.dto.TimeRecordForm;
+import com.example.antologic.timeRecord.dto.TimeRecordUpdateForm;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,8 +43,12 @@ class TimeRecordController {
 
     @DeleteMapping
     public void removeRecord(@RequestParam UUID userUuid,
-                                      @RequestParam UUID recordUuid) {
+                             @RequestParam UUID recordUuid) {
         timeRecordService.deleteRecord(userUuid, recordUuid);
     }
 
+    @PutMapping
+    public void editRecord(@RequestBody @Valid TimeRecordUpdateForm recordForm) {
+        timeRecordService.editRecord(recordForm);
+    }
 }

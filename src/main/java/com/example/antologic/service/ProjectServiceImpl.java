@@ -78,7 +78,7 @@ class ProjectServiceImpl implements ProjectService {
                 .map(tr -> tr.getSalary().multiply(BigDecimal.valueOf(Duration.between(tr.getStart(), tr.getStop()).toHours())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return budget.multiply(BigDecimal.valueOf(100).divide(project.getBudget(), RoundingMode.HALF_UP));
+        return budget.multiply(BigDecimal.valueOf(100)).divide(project.getBudget(), RoundingMode.HALF_UP);
 
     }
 
@@ -127,7 +127,7 @@ class ProjectServiceImpl implements ProjectService {
         final User user = userRepository.findByUuid(removeForm.getUserUuid()).orElseThrow(() ->
                 new NotFoundException("User does not exist"));
 
-        if (!projectUserRepository.findByProjectAndUser(project, user).isPresent()) {
+        if (projectUserRepository.findByProjectAndUser(project, user).isEmpty()) {
             throw new NotFoundException("This user is not in the project");
         }
 
@@ -143,12 +143,19 @@ class ProjectServiceImpl implements ProjectService {
         if (searchCriteria == null) {
             throw new NoContentException("No criteria included");
         }
-        Specification<Project> specification = new ProjectSpecification(searchCriteria);
+        final List<ProjectDTOBudget> projectDtoBudgets = projectRepository.findAll(page).stream()
+                .map(project -> ProjectMapper.toDtoBudget(project, countBudget(project)))
+                .toList();
 
-        final Page<ProjectDTOBudget> projectDTOPage = projectRepository.findAll(specification, page)
-                .map(project -> ProjectMapper.toDtoBudget(project, countBudget(project)));
+        Specification<Project> specification = new ProjectSpecification(searchCriteria, projectDtoBudgets);
 
-        return PageMapper.toDtoProject(projectDTOPage);
+        final List<ProjectDTOBudget> projectDTOBudgetsFiltered = projectRepository.findAll(specification, page).stream()
+                .map(project -> ProjectMapper.toDtoBudget(project, countBudget(project)))
+                .toList();
+
+        final Page<ProjectDTOBudget> pages = new PageImpl<>(projectDTOBudgetsFiltered);
+
+        return PageMapper.toDtoProject(pages);
     }
 
     @Override

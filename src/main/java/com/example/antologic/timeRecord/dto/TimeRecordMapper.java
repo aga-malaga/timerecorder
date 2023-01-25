@@ -1,6 +1,5 @@
 package com.example.antologic.timeRecord.dto;
 
-import com.example.antologic.projectUser.ProjectUser;
 import com.example.antologic.timeRecord.TimeRecord;
 import lombok.AllArgsConstructor;
 
@@ -8,7 +7,7 @@ import lombok.AllArgsConstructor;
 public class TimeRecordMapper {
 
 
-    public static TimeRecord toTimeRecord(TimeRecordForm form, ProjectUser projectUser) {
+    public static TimeRecord toTimeRecord(TimeRecordForm form) {
         TimeRecord timeRecord = new TimeRecord();
         timeRecord.setStart(form.getStart());
         timeRecord.setStop(form.getStop());
