@@ -3,6 +3,7 @@ package com.example.antologic.repository;
 import com.example.antologic.project.Project;
 import com.example.antologic.projectUser.ProjectUser;
 import com.example.antologic.timeRecord.TimeRecord;
+import com.example.antologic.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -33,6 +34,12 @@ interface TimeRecordRepository extends JpaRepository<TimeRecord, Long>,
             "LEFT join ProjectUser pu ON t.projectUser.project.id = pu.project.id " +
             "LEFT JOIN Project p ON pu.project.id  = p.id WHERE p.id = :#{#project.id}")
     List<TimeRecord> findTimeRecordsByProject(@Param("project")Project project);
+
+    @Query("SELECT t FROM TimeRecord t " +
+            "LEFT join ProjectUser pu ON t.projectUser.user.id = pu.user.id " +
+            "LEFT JOIN User u ON pu.user.id  = u.id WHERE u.id = :#{#user.id} " +
+            "AND t.start >= :#{#period}")
+    List<TimeRecord> findTimeRecordsByUser(@Param("user") User user, @Param("period") LocalDateTime period);
 
     void removeTimeRecordByUuid(UUID recordUuid);
 

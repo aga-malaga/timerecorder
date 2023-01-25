@@ -17,6 +17,8 @@ import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectMapper;
 import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectUpdateForm;
+import com.example.antologic.project.report.ProjectReportDTO;
+import com.example.antologic.project.report.ReportForm;
 import com.example.antologic.repository.ProjectRepository;
 import com.example.antologic.repository.ProjectUserRepository;
 import com.example.antologic.repository.TimeRecordRepository;
@@ -36,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -188,4 +192,25 @@ class ProjectServiceImpl implements ProjectService {
         }
         projectRepository.removeProjectByUuid(uuid);
     }
+
+    public ProjectReportDTO createUserReport(UUID managerUuid, ReportForm form) {
+        validate(managerUuid);
+
+        final User user = userRepository.findByUuid(form.getUserUuid()).orElseThrow(() ->
+                new NotFoundException("User does not exist"));
+
+        LocalDateTime period = LocalDateTime.now();
+        switch (form.getTimePeriod()) {
+            case WEEK -> period = period.minus(Period.ofDays(7));
+            case MONTH -> period = period.minus(Period.ofMonths(1));
+            case YEAR -> period = period.minus(Period.ofYears(1));
+        }
+        List<TimeRecord> timeRecordList = timeRecordRepository.findTimeRecordsByUser(user, period);
+        final BigDecimal totalCost = timeRecordList.stream()
+                .map(tr -> tr.getSalary().multiply(BigDecimal.valueOf(Duration.between(tr.getStart(), tr.getStop()).toHours())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new ProjectReportDTO(totalCost);
+    }
 }
+

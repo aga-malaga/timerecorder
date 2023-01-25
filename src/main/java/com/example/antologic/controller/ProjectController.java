@@ -7,6 +7,8 @@ import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectUpdateForm;
+import com.example.antologic.project.report.ProjectReportDTO;
+import com.example.antologic.project.report.ReportForm;
 import com.example.antologic.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -44,6 +46,12 @@ class ProjectController {
                                @RequestBody(required = false) ProjectSearchCriteria searchCriteria,
                                Pageable page) {
         return projectService.filterProjects(managerUuid, searchCriteria, page);
+    }
+
+    @GetMapping("/userreport")
+    public ProjectReportDTO showUserReport(@RequestParam UUID managerUuid,
+                                           @RequestBody @Valid ReportForm form){
+        return projectService.createUserReport(managerUuid, form);
     }
 
     @PostMapping
