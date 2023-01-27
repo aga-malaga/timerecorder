@@ -7,7 +7,7 @@ import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectUpdateForm;
-import com.example.antologic.project.report.ProjectReportDTO;
+import com.example.antologic.project.report.ReportDTO;
 import com.example.antologic.project.report.ReportForm;
 import com.example.antologic.service.ProjectService;
 import jakarta.validation.Valid;
@@ -49,8 +49,8 @@ class ProjectController {
     }
 
     @GetMapping("/userreport")
-    public ProjectReportDTO showUserReport(@RequestParam UUID managerUuid,
-                                           @RequestBody @Valid ReportForm form){
+    public ReportDTO showUserReport(@RequestParam UUID managerUuid,
+                                    @RequestBody @Valid ReportForm form) {
         return projectService.createUserReport(managerUuid, form);
     }
 
@@ -82,6 +82,4 @@ class ProjectController {
     public void deleteProject(@RequestParam UUID managerUuid, @RequestParam UUID uuid) {
         projectService.deleteProject(managerUuid, uuid);
     }
-
-
 }

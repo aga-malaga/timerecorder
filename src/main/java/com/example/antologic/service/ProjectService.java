@@ -7,7 +7,7 @@ import com.example.antologic.project.dto.ProjectDTO;
 import com.example.antologic.project.dto.ProjectForm;
 import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectUpdateForm;
-import com.example.antologic.project.report.ProjectReportDTO;
+import com.example.antologic.project.report.ReportDTO;
 import com.example.antologic.project.report.ReportForm;
 import org.springframework.data.domain.Pageable;
 
@@ -29,5 +29,5 @@ public interface ProjectService {
 
     void deleteProject(UUID managerUuid, UUID uuid);
 
-    ProjectReportDTO createUserReport(UUID managerUuid, ReportForm form);
+    ReportDTO createUserReport(UUID managerUuid, ReportForm form);
 }

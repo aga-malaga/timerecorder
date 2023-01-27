@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -33,13 +34,27 @@ interface TimeRecordRepository extends JpaRepository<TimeRecord, Long>,
     @Query("SELECT t FROM TimeRecord t " +
             "LEFT join ProjectUser pu ON t.projectUser.project.id = pu.project.id " +
             "LEFT JOIN Project p ON pu.project.id  = p.id WHERE p.id = :#{#project.id}")
-    List<TimeRecord> findTimeRecordsByProject(@Param("project")Project project);
+    List<TimeRecord> findTimeRecordsByProject(@Param("project") Project project);
 
     @Query("SELECT t FROM TimeRecord t " +
             "LEFT join ProjectUser pu ON t.projectUser.user.id = pu.user.id " +
             "LEFT JOIN User u ON pu.user.id  = u.id WHERE u.id = :#{#user.id} " +
             "AND t.start >= :#{#period}")
     List<TimeRecord> findTimeRecordsByUser(@Param("user") User user, @Param("period") LocalDateTime period);
+
+    @Query(value =
+            "SELECT SUM(extract('hour' from t.stop) - extract('hour' from t.start))" +
+                    "from time_records as t " +
+                    "WHERE project_user_user_id = :#{#projectUser.user.id} AND " +
+                    "project_user_project_id = :#{#projectUser.project.id}", nativeQuery = true)
+    Long findTimeRecordsByProjectUserAndSumHours(@Param("projectUser") ProjectUser projectUser);
+
+    @Query(value =
+            "SELECT SUM((extract('hour' from t.stop) - extract('hour' from t.start)) * t.salary)" +
+                    "from time_records as t " +
+                    "WHERE project_user_user_id = :#{#projectUser.user.id} AND " +
+                    "project_user_project_id = :#{#projectUser.project.id}", nativeQuery = true)
+    BigDecimal findTimeRecordsByProjectUserAndSumHCost(@Param("projectUser") ProjectUser projectUser);
 
     void removeTimeRecordByUuid(UUID recordUuid);
 

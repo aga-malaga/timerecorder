@@ -18,7 +18,9 @@ import com.example.antologic.project.dto.ProjectMapper;
 import com.example.antologic.project.dto.ProjectShiftForm;
 import com.example.antologic.project.dto.ProjectUpdateForm;
 import com.example.antologic.project.report.ProjectReportDTO;
+import com.example.antologic.project.report.ReportDTO;
 import com.example.antologic.project.report.ReportForm;
+import com.example.antologic.projectUser.ProjectUser;
 import com.example.antologic.repository.ProjectRepository;
 import com.example.antologic.repository.ProjectUserRepository;
 import com.example.antologic.repository.TimeRecordRepository;
@@ -193,7 +195,7 @@ class ProjectServiceImpl implements ProjectService {
         projectRepository.removeProjectByUuid(uuid);
     }
 
-    public ProjectReportDTO createUserReport(UUID managerUuid, ReportForm form) {
+    public ReportDTO createUserReport(UUID managerUuid, ReportForm form) {
         validate(managerUuid);
 
         final User user = userRepository.findByUuid(form.getUserUuid()).orElseThrow(() ->
@@ -206,11 +208,20 @@ class ProjectServiceImpl implements ProjectService {
             case YEAR -> period = period.minus(Period.ofYears(1));
         }
         List<TimeRecord> timeRecordList = timeRecordRepository.findTimeRecordsByUser(user, period);
+
         final BigDecimal totalCost = timeRecordList.stream()
                 .map(tr -> tr.getSalary().multiply(BigDecimal.valueOf(Duration.between(tr.getStart(), tr.getStop()).toHours())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new ProjectReportDTO(totalCost);
+        final List<ProjectUser> projectUsers = projectUserRepository.findProjectUsersByUser(user);
+
+        final List<ProjectReportDTO> dtos = projectUsers.stream()
+                .map(projectUser -> new ProjectReportDTO(
+                        projectUser.getProject().getName(),
+                        timeRecordRepository.findTimeRecordsByProjectUserAndSumHours(projectUser),
+                        timeRecordRepository.findTimeRecordsByProjectUserAndSumHCost(projectUser))).toList();
+
+        return new ReportDTO(totalCost, dtos);
     }
 }
 

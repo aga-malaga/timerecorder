@@ -49,6 +49,4 @@ public class ProjectMapper {
                 projectUserDTO(project)
         );
     }
-
-
 }
