@@ -1,7 +1,6 @@
 package com.example.timerecorder.user.domain;
 
 import com.example.timerecorder.common.dto.PageDTO;
-import com.example.timerecorder.common.dto.PageMapper;
 import com.example.timerecorder.common.exception.AlreadyExistsException;
 import com.example.timerecorder.common.exception.NoContentException;
 import com.example.timerecorder.common.exception.NotFoundException;
@@ -23,6 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import static com.example.timerecorder.common.dto.PageMapper.toDtoUser;
+import static com.example.timerecorder.user.dto.UserMapper.toDto;
+import static com.example.timerecorder.user.dto.UserMapper.toEntity;
+import static com.example.timerecorder.user.dto.UserMapper.update;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserFacade {
@@ -30,56 +34,41 @@ public class UserServiceImpl implements UserFacade {
     private final UserRepository userRepository;
     private final AdminValidator validateAdmin;
 
-    public PageDTO findUsers(UUID adminUuid, int pageNo, int pageSize, String sortBy) {
-        validate(adminUuid);
+    public PageDTO findUsers(int pageNo, int pageSize, String sortBy) {
+//        validate(adminUuid);
 
         Pageable p = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         final Page<UserDto> pageUserDTO = userRepository.findAll(p).map(UserMapper::toDto);
-        return PageMapper.toDtoUser(pageUserDTO);
-    }
-
-    public void validate(UUID admin) {
-        validateAdmin.validate(admin);
+        return toDtoUser(pageUserDTO);
     }
 
     @Override
-    public UserDto createUser(UUID adminUuid, UserCreateForm userCreateForm) {
-        validate(adminUuid);
+    public UserDto createUser(UserCreateForm createForm) {
+//        validateAdmin(adminUuid);
+        verifyIfLoginExists(createForm);
 
-        if (userRepository.existsByLogin(userCreateForm.getLogin())) {
-            throw new AlreadyExistsException("This login already exists");
-        }
-        User user = UserMapper.toUser(userCreateForm);
+        User user = toEntity(createForm);
         userRepository.save(user);
-        return UserMapper.toDto(user);
+
+        return toDto(user);
     }
 
     @Override
-    public void editUser(final UUID adminUuid, final UserUpdateForm userUpdateForm) {
-        validate(adminUuid);
+    public void editUser(final UserUpdateForm updateForm) {
+//        validateAdmin(adminUuid);
 
-        final UUID userUuid = userUpdateForm.getUserUuid();
-        final User user = userRepository.findByUuid(userUuid).orElseThrow(() ->
-                new NotFoundException("User with id " + userUuid + " not found"));
+        final UUID userUuid = updateForm.getUserUuid();
+        final User user = findUser(userUuid);
 
-        user.setLogin(userUpdateForm.getLogin());
-        user.setName(userUpdateForm.getName());
-        user.setSurname(userUpdateForm.getSurname());
-        user.setRole(userUpdateForm.getRole());
-        user.setEmail(userUpdateForm.getEmail());
-        user.setPassword(userUpdateForm.getPassword());
-        user.setCostPerHour(userUpdateForm.getCostPerHour());
+        update(user, updateForm);
         userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void deleteUser(UUID adminUuid, UUID uuid) {
-        validate(adminUuid);
-
-        if (!userRepository.existsByUuid(uuid)) {
-            throw new NotFoundException("User with id " + uuid + " not found");
-        }
+    public void deleteUser(UUID uuid) {
+//        validateAdmin(adminUuid);
+        verifyIfUserExists(uuid);
         userRepository.removeUserByUuid(uuid);
     }
 
@@ -91,7 +80,28 @@ public class UserServiceImpl implements UserFacade {
         Specification<User> specification = new UserSpecification(searchCriteria);
 
         final Page<UserDto> pageUserDto = userRepository.findAll(specification, page).map(UserMapper::toDto);
-        return PageMapper.toDtoUser(pageUserDto);
+
+        return toDtoUser(pageUserDto);
+    }
+
+    private void validateAdmin(UUID admin) {
+        validateAdmin.validate(admin);
+    }
+
+    private User findUser(final UUID userUuid) {
+        return userRepository.findByUuid(userUuid).orElseThrow(() ->
+                new NotFoundException("User with id " + userUuid + " not found"));
+    }
+
+    private void verifyIfUserExists(final UUID uuid) {
+        if (!userRepository.existsByUuid(uuid)) {
+            throw new NotFoundException("User with id " + uuid + " not found");
+        }
+    }
+
+    private void verifyIfLoginExists(final UserCreateForm userCreateForm) {
+        if (userRepository.existsByLogin(userCreateForm.getLogin())) {
+            throw new AlreadyExistsException("This login already exists");
+        }
     }
 }
-

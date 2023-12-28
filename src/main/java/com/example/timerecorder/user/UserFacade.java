@@ -10,9 +10,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface UserFacade {
-    PageDTO findUsers(UUID adminUuid, int pageNo, int pageSize, String sortBy);
-    UserDto createUser(UUID adminUuid, UserCreateForm userCreateForm);
-    void editUser(UUID adminUuid, UserUpdateForm userUpdateForm);
-    void deleteUser(UUID adminUuid, UUID uuid);
+    PageDTO findUsers(int pageNo, int pageSize, String sortBy);
+    UserDto createUser(UserCreateForm userCreateForm);
+    void editUser(UserUpdateForm userUpdateForm);
+    void deleteUser(UUID uuid);
     PageDTO filterUsers(UUID adminUuid, SearchCriteria searchCriteria, Pageable page);
 }

@@ -44,7 +44,7 @@ public class UserServiceImplTest {
         // given
         final UUID admin = UUID.randomUUID();
         // when
-        underTest.validate(admin);
+        underTest.validateAdmin(admin);
         // then
         verify(adminValidator).validate(admin);
     }

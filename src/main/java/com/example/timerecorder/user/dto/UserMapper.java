@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserMapper {
 
-    public static User toUser(UserCreateForm userCreateForm) {
+    public static User toEntity(UserCreateForm userCreateForm) {
         User user = new User();
         user.setLogin(userCreateForm.getLogin());
         user.setName(userCreateForm.getName());
@@ -18,7 +18,17 @@ public class UserMapper {
         user.setEmail(userCreateForm.getEmail());
         user.setPassword(userCreateForm.getPassword());
         user.setCostPerHour(userCreateForm.getCostPerHour());
+        return user;
+    }
 
+    public static User update(User user, UserUpdateForm updateForm) {
+        user.setLogin(updateForm.getLogin());
+        user.setName(updateForm.getName());
+        user.setSurname(updateForm.getSurname());
+        user.setRole(updateForm.getRole());
+        user.setEmail(updateForm.getEmail());
+        user.setPassword(updateForm.getPassword());
+        user.setCostPerHour(updateForm.getCostPerHour());
         return user;
     }
 
