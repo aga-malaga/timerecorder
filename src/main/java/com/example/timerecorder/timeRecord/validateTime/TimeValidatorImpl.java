@@ -11,9 +11,9 @@ final class TimeValidatorImpl implements TimeValidator {
 
     @Override
     public boolean validateTime(final LocalDateTime start, final LocalDateTime stop, final ProjectUser projectUser, final Project project) {
-        return start.isAfter(projectUser.getEnterOn())
-                && start.isAfter(project.getStartDate())
-                && stop.isBefore(projectUser.getLeaveOn())
-                && stop.isBefore(project.getEndDate());
+        return start.isAfter(projectUser.getEnterOn().atStartOfDay())
+                && start.isAfter(project.getStartDate().atStartOfDay())
+                && stop.isBefore(projectUser.getLeaveOn().atStartOfDay())
+                && stop.isBefore(project.getEndDate().atStartOfDay());
     }
 }

@@ -8,7 +8,7 @@ CREATE TABLE users
     surname       VARCHAR(50)                             NOT NULL,
     role          VARCHAR(50)                             NOT NULL,
     email         VARCHAR(320)                            NOT NULL UNIQUE,
-    password      VARCHAR(50)                             NOT NULL,
+    password      TEXT                                    NOT NULL,
     cost_per_hour NUMERIC                                 NOT NULL,
     projects_id   BIGINT
 );

@@ -28,9 +28,13 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     Optional<User> findByUuid(UUID uuid);
 
+    Optional<User> findUserByLogin(String login);
+
     boolean existsByUuid(UUID uuid);
 
     boolean existsByLogin(String login);
 
     void removeUserByUuid(UUID uuid);
+
+    Optional<User> findUserByLoginAndPassword(String login, String password);
 }

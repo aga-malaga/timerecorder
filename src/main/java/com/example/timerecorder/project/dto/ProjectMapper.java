@@ -18,15 +18,6 @@ public class ProjectMapper {
         return project;
     }
 
-    public static void update(Project project, ProjectUpdateForm updateForm) {
-        project.setName(updateForm.name());
-        project.setDescription(updateForm.description());
-        project.setStartDate(updateForm.start());
-        project.setEndDate(updateForm.start());
-        project.setBudget(updateForm.budget());
-    }
-
-
     public static ProjectDto toDto(Project project) {
         return new ProjectDto(
                 project.getUuid(),
@@ -36,6 +27,16 @@ public class ProjectMapper {
                 project.getEndDate(),
                 project.getBudget(),
                 projectUserDTO(project));
+    }
+
+    private static List<ProjectUserDTO> projectUserDTO(Project project) {
+        return project.getUsers().stream()
+                .map(ProjectMapper::toProjectUser)
+                .toList();
+    }
+
+    private static ProjectUserDTO toProjectUser(final ProjectUser user) {
+        return new ProjectUserDTO(user.getUser().getUuid(), user.getUser().getName(), user.getUser().getSurname());
     }
 
     public static ProjectDtoBudget toDtoBudget(Project project, BigDecimal budget) {
@@ -48,15 +49,5 @@ public class ProjectMapper {
                 project.getBudget(),
                 budget,
                 projectUserDTO(project));
-    }
-
-    private static List<ProjectUserDTO> projectUserDTO(Project project) {
-        return project.getUsers().stream()
-                .map(ProjectMapper::toProjectUser)
-                .toList();
-    }
-
-    private static ProjectUserDTO toProjectUser(final ProjectUser user) {
-        return new ProjectUserDTO(user.getUser().getUuid(), user.getUser().getName(), user.getUser().getSurname());
     }
 }

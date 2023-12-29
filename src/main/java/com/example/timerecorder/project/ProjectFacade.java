@@ -14,12 +14,12 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface ProjectFacade {
-    PageDTO findProjects(UUID managerUuid, int pageNo, int pageSize, String sortBy);
-    ProjectDto createProject(UUID managerUuid, ProjectForm projectForm);
-    void addUserToProject(UUID managerUuid, ProjectAddForm addForm);
-    void removeUserFromProject(UUID managerUuid, ProjectRemoveForm removeForm);
-    PageDTO filterProjects(UUID adminUuid, ProjectSearchCriteria searchCriteria, Pageable page);
-    void editProject(UUID managerUuid, ProjectUpdateForm updateForm);
-    void deleteProject(UUID managerUuid, UUID uuid);
-    ReportDto createUserReport(UUID managerUuid, ReportForm form);
+    PageDTO findProjects(int pageNo, int pageSize, String sortBy);
+    ProjectDto createProject(ProjectForm projectForm);
+    void addUserToProject(ProjectAddForm addForm);
+    void removeUserFromProject(ProjectRemoveForm removeForm);
+    PageDTO filterProjects(ProjectSearchCriteria searchCriteria, Pageable page);
+    void editProject(ProjectUpdateForm updateForm);
+    void deleteProject(UUID uuid);
+    ReportDto createUserReport(ReportForm form);
 }

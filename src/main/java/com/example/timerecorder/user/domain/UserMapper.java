@@ -1,39 +1,37 @@
-package com.example.timerecorder.user.dto;
+package com.example.timerecorder.user.domain;
 
 
-import com.example.timerecorder.user.domain.User;
-import lombok.AllArgsConstructor;
+import com.example.timerecorder.user.dto.UserCreateForm;
+import com.example.timerecorder.user.dto.UserDto;
+import com.example.timerecorder.user.dto.UserSecurity;
+import com.example.timerecorder.user.dto.UserUpdateForm;
 
-import java.util.stream.Collectors;
-
-@AllArgsConstructor
 public class UserMapper {
 
-    public static User toEntity(UserCreateForm userCreateForm) {
+    static User toEntity(UserCreateForm userCreateForm, String password) {
         User user = new User();
         user.setLogin(userCreateForm.getLogin());
         user.setName(userCreateForm.getName());
         user.setSurname(userCreateForm.getSurname());
         user.setRole(userCreateForm.getRole());
         user.setEmail(userCreateForm.getEmail());
-        user.setPassword(userCreateForm.getPassword());
+        user.setPassword(password);
         user.setCostPerHour(userCreateForm.getCostPerHour());
         return user;
     }
 
-    public static User update(User user, UserUpdateForm updateForm) {
+    static User update(User user, UserUpdateForm updateForm, String password) {
         user.setLogin(updateForm.getLogin());
         user.setName(updateForm.getName());
         user.setSurname(updateForm.getSurname());
         user.setRole(updateForm.getRole());
         user.setEmail(updateForm.getEmail());
-        user.setPassword(updateForm.getPassword());
+        user.setPassword(password);
         user.setCostPerHour(updateForm.getCostPerHour());
         return user;
     }
 
-    public static UserDto toDto(User user) {
-
+    static UserDto toDto(User user) {
         return new UserDto(
                 user.getUuid(),
                 user.getLogin(),
@@ -43,8 +41,11 @@ public class UserMapper {
                 user.getEmail(),
                 user.getCostPerHour(),
                 user.getProjects().stream()
-                        .map(pu -> pu.getProject().getName())
-                        .collect(Collectors.toList())
-        );
+                        .map(projectUser -> projectUser.getProject().getName())
+                        .toList());
+    }
+
+    static UserSecurity toUserSecurity(User user) {
+        return new UserSecurity(user.getUuid(), user.getLogin(), user.getRole().name());
     }
 }

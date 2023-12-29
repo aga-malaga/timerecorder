@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,9 +21,9 @@ public class ProjectForm {
     private String name;
     private String description = "";
     @NotNull(message = "start of the project is mandatory")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     @NotNull(message = "end of the project is mandatory")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     @DecimalMin(value = "0", message = "budget must be greater than 0")
     private BigDecimal budget;
 

@@ -17,7 +17,7 @@ import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,10 +44,10 @@ public class Project {
     private String description;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Column(name = "budget")
     private BigDecimal budget;
@@ -61,7 +61,7 @@ public class Project {
     private List<ProjectUser> users = new ArrayList<>();
 
 
-    public void addUser(User user, LocalDateTime enter, LocalDateTime leave) {
+    public void addUser(User user, LocalDate enter, LocalDate leave) {
         ProjectUser projectUser = new ProjectUser(this, user, enter, leave);
         users.add(projectUser);
         user.getProjects().add(projectUser);

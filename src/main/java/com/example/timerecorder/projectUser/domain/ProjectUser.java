@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +49,11 @@ public class ProjectUser {
     @MapsId("userId")
     private User user;
     @Column(name = "enter_on")
-    private LocalDateTime enterOn;
+    private LocalDate enterOn;
     @Column(name = "leave_on")
-    private LocalDateTime leaveOn;
+    private LocalDate leaveOn;
 
-    public ProjectUser(final Project project, final User user, final LocalDateTime enter, final LocalDateTime leave) {
+    public ProjectUser(final Project project, final User user, final LocalDate enter, final LocalDate leave) {
         this.project = project;
         this.user = user;
         this.id = new ProjectUserId(project.getId(), user.getId());

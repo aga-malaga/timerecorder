@@ -5,7 +5,6 @@ import com.example.timerecorder.common.exception.AlreadyExistsException;
 import com.example.timerecorder.common.exception.ConflictException;
 import com.example.timerecorder.common.exception.NoContentException;
 import com.example.timerecorder.common.exception.NotFoundException;
-import com.example.timerecorder.customSecurity.ManagerValidator;
 import com.example.timerecorder.project.Project;
 import com.example.timerecorder.project.ProjectFacade;
 import com.example.timerecorder.project.ProjectSpecification;
@@ -46,7 +45,6 @@ import static com.example.timerecorder.common.dto.PageMapper.toDtoProject;
 import static com.example.timerecorder.project.dto.ProjectMapper.toDto;
 import static com.example.timerecorder.project.dto.ProjectMapper.toDtoBudget;
 import static com.example.timerecorder.project.dto.ProjectMapper.toProject;
-import static com.example.timerecorder.project.dto.ProjectMapper.update;
 
 @Service
 @RequiredArgsConstructor
@@ -56,13 +54,10 @@ class ProjectServiceImpl implements ProjectFacade {
     private final UserRepository userRepository;
     private final TimeRecordRepository timeRecordRepository;
     private final ProjectUserRepository projectUserRepository;
-    private final ManagerValidator managerValidator;
 
     @Transactional
     @Override
-    public PageDTO findProjects(UUID managerUuid, int pageNo, int pageSize, String sortBy) {
-        validate(managerUuid);
-
+    public PageDTO findProjects(int pageNo, int pageSize, String sortBy) {
         Pageable pageRequest = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         final List<ProjectDtoBudget> projectDTOPage = projectRepository.findAll(pageRequest).stream()
@@ -74,8 +69,7 @@ class ProjectServiceImpl implements ProjectFacade {
 
     @Transactional
     @Override
-    public ProjectDto createProject(UUID managerUuid, ProjectForm projectForm) {
-        validate(managerUuid);
+    public ProjectDto createProject(ProjectForm projectForm) {
         verifyIfNameUnique(projectForm.getName());
 
         Project project = toProject(projectForm);
@@ -86,9 +80,7 @@ class ProjectServiceImpl implements ProjectFacade {
 
     @Transactional
     @Override
-    public void addUserToProject(UUID managerUuid, ProjectAddForm addForm) {
-        validate(managerUuid);
-
+    public void addUserToProject(ProjectAddForm addForm) {
         final Project project = findProject(addForm.projectUuid());
         final User user = findUser(addForm.userUuid());
 
@@ -100,9 +92,7 @@ class ProjectServiceImpl implements ProjectFacade {
 
     @Transactional
     @Override
-    public void removeUserFromProject(UUID managerUuid, ProjectRemoveForm removeForm) {
-        validate(managerUuid);
-
+    public void removeUserFromProject(ProjectRemoveForm removeForm) {
         final Project project = findProject(removeForm.projectUuid());
         final User user = findUser(removeForm.userUuid());
 
@@ -113,8 +103,7 @@ class ProjectServiceImpl implements ProjectFacade {
 
     @Transactional
     @Override
-    public PageDTO filterProjects(UUID managerUuid, ProjectSearchCriteria searchCriteria, Pageable page) {
-        validate(managerUuid);
+    public PageDTO filterProjects(ProjectSearchCriteria searchCriteria, Pageable page) {
         if (searchCriteria == null) {
             throw new NoContentException("No criteria included");
         }
@@ -134,30 +123,30 @@ class ProjectServiceImpl implements ProjectFacade {
 
     @Transactional
     @Override
-    public void editProject(final UUID managerUuid, final ProjectUpdateForm updateForm) {
-        validate(managerUuid);
-
+    public void editProject(final ProjectUpdateForm updateForm) {
         final Project project = findProject(updateForm.projectUuid());
+        if (!project.getName().equals(updateForm.name())) {
+            verifyIfNameUnique(updateForm.name());
+        }
+        project.setName(updateForm.name());
+        project.setDescription(updateForm.description());
+        project.setStartDate(updateForm.start());
+        project.setEndDate(updateForm.stop());
+        project.setBudget(updateForm.budget());
 
-        verifyIfNameUnique(updateForm.name());
-
-        update(project, updateForm);
         projectRepository.save(project);
     }
 
     @Transactional
     @Override
-    public void deleteProject(UUID managerUuid, UUID uuid) {
-        validate(managerUuid);
+    public void deleteProject(UUID uuid) {
         verifyIfProjectExists(uuid);
         projectRepository.removeProjectByUuid(uuid);
     }
 
     @Transactional
     @Override
-    public ReportDto createUserReport(UUID managerUuid, ReportForm form) {
-        validate(managerUuid);
-
+    public ReportDto createUserReport(ReportForm form) {
         final User user = findUser(form.userUuid());
 
         LocalDateTime now = LocalDateTime.now();
@@ -226,10 +215,6 @@ class ProjectServiceImpl implements ProjectFacade {
         if (projectRepository.existsByName(name)) {
             throw new AlreadyExistsException("Project with name " + name + " already exists");
         }
-    }
-
-    private void validate(final UUID managerUuid) {
-        managerValidator.validateManager(managerUuid);
     }
 
     private BigDecimal countBudget(Project project) {
