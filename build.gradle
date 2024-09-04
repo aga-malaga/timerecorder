@@ -1,3 +1,10 @@
+buildscript {
+	ext {
+		// test
+		mockitoVersion = '5.11.0'
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.1'
@@ -22,6 +29,8 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 }
+
+ext['mockito.version'] = mockitoVersion
 
 tasks.named('test') {
 	useJUnitPlatform()

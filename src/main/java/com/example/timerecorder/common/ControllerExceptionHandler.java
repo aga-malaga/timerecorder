@@ -1,11 +1,6 @@
 package com.example.timerecorder.common;
 
-import com.example.timerecorder.common.exception.AlreadyExistsException;
-import com.example.timerecorder.common.exception.ConflictException;
-import com.example.timerecorder.common.exception.ErrorMessage;
-import com.example.timerecorder.common.exception.NoContentException;
-import com.example.timerecorder.common.exception.NotFoundException;
-import com.example.timerecorder.common.exception.UnauthorizedException;
+import com.example.timerecorder.common.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +14,8 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 class ControllerExceptionHandler {
 
+    private static final String MESSAGE = "An error occurred processing request %s";
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMessage resourceNotFoundException(NotFoundException ex, WebRequest request) {
@@ -26,7 +23,7 @@ class ControllerExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("An error occurred processing request" + ex);
+        log.error(MESSAGE.formatted(ex));
         return message;
     }
 
@@ -37,7 +34,7 @@ class ControllerExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("An error occurred processing request" + ex);
+        log.error(MESSAGE.formatted(ex));
         return message;
     }
 
@@ -48,7 +45,7 @@ class ControllerExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("An error occurred processing request" + ex);
+        log.error(MESSAGE.formatted(ex));
         return message;
     }
 
@@ -59,7 +56,7 @@ class ControllerExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("An error occurred processing request" + ex);
+        log.error(MESSAGE.formatted(ex));
         return message;
     }
 
@@ -70,7 +67,7 @@ class ControllerExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.error("An error occurred processing request" + ex);
+        log.error(MESSAGE.formatted(ex));
         return message;
     }
 
@@ -81,7 +78,7 @@ class ControllerExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-        log.info("An error occurred processing request" + ex);
+        log.info(MESSAGE.formatted(ex));
         return message;
     }
 }
