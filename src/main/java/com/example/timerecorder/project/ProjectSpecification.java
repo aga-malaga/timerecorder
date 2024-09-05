@@ -44,7 +44,7 @@ public class ProjectSpecification implements Specification<Project> {
         if (Objects.nonNull(projectSearchCriteria.stop())) {
             predicates.add(builder.lessThanOrEqualTo(root.get(Project.Fields.endDate), projectSearchCriteria.stop()));
         }
-        if (Objects.nonNull(projectSearchCriteria.userUuid()) && projectSearchCriteria.userUuid().size() > 0) {
+        if (Objects.nonNull(projectSearchCriteria.userUuid()) && !projectSearchCriteria.userUuid().isEmpty()) {
             projectSearchCriteria.userUuid().forEach(uuid -> {
                 predicates.add(
                         builder.isTrue(
